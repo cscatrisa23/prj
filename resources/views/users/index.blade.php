@@ -24,26 +24,41 @@
                         <td>{{$user->name}}</td>
                         <td>{{$user->typeToStr()}}</td>
                         <td>{{$user->blockedToStr()}}</td>
-                        @if($user->blocked==0)
-                            <td>
-                                <form method="POST" action="{{route('users.block', $user)}}">
-                                    {{crsf_field()}}
-                                    {{method_field('PATCH')}}
-                                    <button  type="submit" class="btn btn-xs btn-danger">Block</button>
-                                </form>
-                        @endif
-                        @if($user->blocked==1)
-                            <td> <form method="POST" action="{{route('users.unblock', $user)}}">
-                                    {{method_field('PATCH')}}
-                                    <button  type="submit" class="btn btn-xs btn-primary">Unblock</button>
-                                </form>
-                        @endif
-                        @if($user->admin==0)
-                            <a class="btn btn-xs btn-primary" href="{{route('users.promote', $user)}}">Promote</a></td>
-                        @endif
-                        @if($user->admin==1)
-                            <a class="btn btn-xs btn-danger" href="{{route('users.demote', $user)}}">Demote</a></td>
-                        @endif
+                        <td>
+                            <div class="form-group row">
+                                @if($user->id != Auth::id())
+                                    @if($user->blocked==0)
+                                        <form class="form" method="POST" action="{{route('users.block', $user)}}">
+                                            {{csrf_field()}}
+                                            {{method_field('PATCH')}}
+                                            <button  type="submit" class="btn btn-xs btn-danger">Block</button>
+                                        </form>
+                                    @else
+
+                                        <form class="form" method="POST" action="{{route('users.unblock', $user)}}">
+                                            {{csrf_field()}}
+                                            {{method_field('PATCH')}}
+                                            <button  type="submit" class="btn btn-xs btn-primary">Unblock</button>
+                                        </form>
+                                    @endif
+                                    @if($user->admin==0)
+                                        <form class="form" method="POST" action="{{route('users.promote', $user)}}">
+                                            {{csrf_field()}}
+                                            {{method_field('PATCH')}}
+                                            <button  type="submit" class="btn btn-xs btn-primary">Promote</button>
+                                        </form>
+                                    @else
+                                        <form class="form" method="POST" action="{{route('users.demote', $user)}}">
+                                            {{csrf_field()}}
+                                            {{method_field('PATCH')}}
+                                            <button  type="submit" class="btn btn-xs btn-danger">Demote</button>
+                                        </form>
+                                    @endif
+                                @else
+                                    <p>No actions available!</p>
+                                @endif
+                            </div>
+                        </td>
                     </tr>
                 @endforeach
             </table>
