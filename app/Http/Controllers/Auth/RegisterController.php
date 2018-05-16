@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
-use Illuminate\Support\Facades\Input;
+use Intervention\Image\ImageManagerStatic as Image;
+
 
 class RegisterController extends Controller
 {
@@ -54,8 +55,8 @@ class RegisterController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
-            'phone' => 'numeric|min:20000000|max:999999999',
-            'profile_photo' => 'required|image|max:1999'
+            'phone' => 'nullable|regex:/^(\+\d{2,3})?\s*\d{3}\s*\d{3}\s*\d{3}$/',
+            'profile_photo' => 'nullable|mimes:jpeg,bmp,png,jpg'
         ]);
     }
 
@@ -81,7 +82,7 @@ class RegisterController extends Controller
         if(array_key_exists('profile_photo', $data)) {
             $avatar = $data['profile_photo'];
             $filename = str_random(32) . '.' . $avatar->getClientOriginalExtension();
-            Image::make($avatar)->resize(300,300)->save(storage_path('app/public/profiles/'.$filename));
+            Image::make($avatar)->resize(300,300)->save(storage_path('public/profiles/'.$filename));
         }
 
         return User::create([
@@ -89,7 +90,7 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'phone' => $data['phone'] ?? null,
-            'profile_photo' => $data['profile_photo'] ?? null,
+            'profile_photo' => $filename,
         ]);
     }
 }
