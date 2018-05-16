@@ -36,4 +36,8 @@ class UserController extends Controller
     public function demoteUser(User $user){
 
     }
+
+    public function changePassword(User $user){
+
+    }
 }

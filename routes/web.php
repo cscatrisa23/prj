@@ -33,4 +33,4 @@ Route::patch('/users/{user}/unblock', 'UserController@unblockUser')->name('users
 Route::patch('/users/{user}/promote', 'UserController@promoteUser')->name('users.promote');
 Route::patch('/users/{user}/demote', 'UserController@demoteUser')->name('users.demote');
 
-Route::get('/dsdss', 'UserController@ind');
+Route::patch('/me/password', )
