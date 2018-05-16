@@ -32,3 +32,5 @@ Route::patch('/users/{user}/block', 'UserController@blockUser')->name('users.blo
 Route::patch('/users/{user}/unblock', 'UserController@unblockUser')->name('users.unblock');
 Route::patch('/users/{user}/promote', 'UserController@promoteUser')->name('users.promote');
 Route::patch('/users/{user}/demote', 'UserController@demoteUser')->name('users.demote');
+
+Route::get('/ds', 'UserController@index');
