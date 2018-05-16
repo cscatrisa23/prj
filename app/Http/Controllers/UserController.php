@@ -20,21 +20,22 @@ class UserController extends Controller
     }
 
     public function blockUser(User $user){
-       User::where("id", $user->id)->update([
-           "blocked" => 1
-       ]);
-
-
+        $user->block();
+        return redirect()->back();
     }
 
     public function unblockUser(User $user){
-
+        $user->unblock();
+        return redirect()->back();
     }
     public function promoteUser(User $user){
-
+        $user->promote();
+        return redirect()->back();
     }
-    public function demoteUser(User $user){
 
+    public function demoteUser(User $user){
+        $user->demote();
+        return redirect()->back();
     }
 
     public function changePassword(User $user){
