@@ -9,7 +9,6 @@ class UserController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('admin');
         $this->middleware('admin')->only('index', 'blockUser');
     }
 
@@ -39,7 +38,7 @@ class UserController extends Controller
     }
 
     public function changePasswordForm(){
-        return view('auth.passwords.changePasswordForm');
+        return view('auth.passwords.reset');
     }
 
     public function changePassword(User $user){

@@ -53,10 +53,10 @@
                         <li class="nav-item dropdown">
                             <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                 {{ Auth::user()->name }} <span class="caret"></span>
-                                @if (Auth::user()->profile_picture =! null)
-                                    <img id="imgNavbar" href="#" width="35" height="35"  src="{{ asset('storage/profiles/' . Auth::user()->profile_photo) }}">
-                                @else
+                                @if (empty(Auth::user()->profile_photo))
                                     <img id="imgNavbar" href="#" width="35" height="35"  src="{{ asset('storage/profiles/default.jpeg') }}">
+                                @else
+                                    <img id="imgNavbar" href="#" width="35" height="35"  src="{{ asset('storage/profiles/' . Auth::user()->profile_photo) }}">
                                 @endif
                             </a>
 
