@@ -8,7 +8,7 @@
                 <div class="card-header">{{ __('Reset Password') }}</div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('password.request') }}">
+                    <form method="POST" action="{{ route('users.changePassword') }}">
                         @csrf
                         {{method_field('PATCH')}}
                         <input type="hidden" name="token" value="{{ $token }}">
@@ -22,6 +22,20 @@
                                 @if ($errors->has('email'))
                                     <span class="invalid-feedback">
                                         <strong>{{ $errors->first('email') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="old_password" class="col-md-4 col-form-label text-md-right">{{ __('Old Password') }}</label>
+
+                            <div class="col-md-6">
+                                <input id="old_password" type="password" class="form-control{{ $errors->has('old_password') ? ' is-invalid' : '' }}" name="old_password" required>
+
+                                @if ($errors->has('password'))
+                                    <span class="invalid-feedback">
+                                        <strong>{{ $errors->first('old_password') }}</strong>
                                     </span>
                                 @endif
                             </div>
