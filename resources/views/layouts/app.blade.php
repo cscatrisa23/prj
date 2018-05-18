@@ -40,9 +40,7 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <!-- Left Side Of Navbar -->
                 <ul class="navbar-nav mr-auto">
-                    @if (Auth::user()->admin==1)
-                        <li><a class="nav-link" href="{{ route('users.list') }}">{{ __('User list') }}</a></li>
-                    @endif
+
                 </ul>
 
                 <!-- Right Side Of Navbar -->
@@ -65,6 +63,9 @@
 
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href="{{route('home')}}">Home</a>
+                                @if (Auth::user()->admin==1)
+                                    <a class="nav-link" href="{{ route('users.list') }}">{{ __('User list') }}</a>
+                                @endif
                                 <a class="dropdown-item" href="{{ route('logout') }}"
                                    onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
