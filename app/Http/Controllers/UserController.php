@@ -38,7 +38,21 @@ class UserController extends Controller
         return redirect()->back();
     }
 
+    public function changePasswordForm(){
+        return view('auth.passwords.changePasswordForm');
+    }
+
     public function changePassword(User $user){
 
+        $request = request();
+
+        $validatedData=$request->validate([
+            'old_password'=>'required',
+            'password'=>'required|confirmed|min:6|different:old_password',
+            'password_confirmation'=>'required|same:password',
+        ]);
+        $user_id=Auth::user()->id;
+        $user->password=Hash::make($request->input('password'));
+        $user->save();
     }
 }

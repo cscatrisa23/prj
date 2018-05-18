@@ -47,6 +47,7 @@
                         @else
                             @if (Auth::user()->admin==1)
                                 <li><a class="nav-link" href="{{ route('users.list') }}">{{ __('User list') }}</a></li>
+
                             @endif
 
                             <li class="nav-item dropdown">
@@ -55,12 +56,12 @@
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" href="{{route('home')}}">Home</a>
+                                    <a class="dropdown-item" href="{{route('users.changePasswordForm')}}">Change Password</a>
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
                                         {{ __('Logout') }}
                                     </a>
-
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                         @csrf
                                     </form>

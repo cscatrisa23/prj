@@ -82,7 +82,7 @@ class RegisterController extends Controller
         if(array_key_exists('profile_photo', $data)) {
             $avatar = $data['profile_photo'];
             $filename = str_random(32) . '.' . $avatar->getClientOriginalExtension();
-            Image::make($avatar)->resize(300,300)->save(storage_path('public/profiles/'.$filename));
+            Image::make($avatar)->resize(300,300)->save(storage_path('app/public/profiles/'.$filename));
         }
 
         return User::create([
