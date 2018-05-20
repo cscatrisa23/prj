@@ -23,6 +23,7 @@
         #imgNavbar {
             border-radius: 75%;
         }
+
     </style>
 </head>
 <body>

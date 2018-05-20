@@ -44,8 +44,9 @@ class UserController extends Controller
 
     public function getProfiles(){
         $users = User::all();
-        $associates = DB::table('associate_members')->where('main_user_id', Auth::user()->id);
-        $associate_of = DB::table('associate_members')->where('associated_user_id', Auth::user()->id);
+        $associates = DB::table('associate_members')->where('main_user_id', Auth::user()->id)->get();
+        $associate_of = DB::table('associate_members')->where('associated_user_id', Auth::user()->id)->get();
+
         return view('users.profiles', compact('users', 'associates', 'associate_of'));
 
     }
