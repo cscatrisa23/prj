@@ -51,6 +51,12 @@ class UserController extends Controller
 
     }
 
+    public function getAssociates(){
+        $associates = DB::table('associate_members')->where('main_user_id', Auth::user()->id)->pluck('associated_user_id');
+        $associatesUsers= User::find($associates);
+        //return var_dump($associatesUsers);
+        return view('me.associates', compact( 'associatesUsers'));
+    }
 
     public function changePassword(User $user){
 

@@ -36,4 +36,5 @@ Route::patch('/users/{user}/demote', 'UserController@demoteUser')->name('users.d
 Route::get('/me/password','Auth\ResetPasswordController@showResetForm')->name('users.changePasswordForm');
 Route::patch('/me/password', 'UserController@changePassword') ->name('users.changePassword');
 
-Route::get('/profiless', 'UserController@getProfiles')->name('users.profiles');
+Route::get('/profiles', 'UserController@getProfiles')->name('users.profiles');
+Route::get('/me/associates', 'UserController@getAssociates')->name('users.associates');
