@@ -37,4 +37,6 @@ Route::get('/me/password','Auth\ResetPasswordController@showResetForm')->name('u
 Route::patch('/me/password', 'UserController@changePassword') ->name('users.changePassword');
 
 Route::get('/profiles', 'UserController@getProfiles')->name('users.profiles');
+
 Route::get('/me/associates', 'UserController@getAssociates')->name('users.associates');
+Route::get('/me/associate_of', 'UserController@getAssociate_of')->name('users.associate_of');

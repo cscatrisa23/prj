@@ -73,6 +73,7 @@
                                 @endif
                                 <a class="dropdown-item" href="{{ route('users.profiles') }}">{{ __('Profiles') }}</a>
                                 <a class="dropdown-item" href="{{ route('users.associates') }}">{{ __('My associates') }}</a>
+                                <a class="dropdown-item" href="{{ route('users.associate_of') }}">{{ __('Associate Of') }}</a>
                                 <a class="dropdown-item" href="{{ route('logout') }}"
                                    onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
