@@ -13,10 +13,35 @@ class UserController extends Controller
         $this->middleware('admin')->only('index', 'blockUser', 'promoteUser', 'unblockUser', 'demoteUser');
     }
 
-    public function index(){
-        $pagetittle= "List of users";
-        $users = User::all();
-        return view('users.index', compact('pagetittle', 'users'));
+    public function list(Request $request){
+        $users = $this->listFilter($request);
+        return view('users.list', compact( 'users'));
+    }
+
+    public function listFilter(Request $request)
+    {
+        //Somente o campo nome preenchido
+        if ($request->filled('name') && !$request->filled('type', 'status'))
+            return User::where('name', 'like', "%{$request->query('name')}%")->get();
+
+        //Somente o tipo preenchido
+        if ($request->filled('type') && !$request->filled('name') && !$request->filled('status')){
+            if ($request->query('type') == "admin")
+                return User::where('admin', 1)->get();
+            if ($request->query('type') == "normal")
+                return User::where('admin', 0)->get();
+        }
+
+        //Somente o status preenchido
+        if ($request->filled('status') && !$request->filled('status') && !$request->filled('name')){
+            if ($request->query('status') == "blocked")
+                return User::where('admin', 1)->get();
+            if ($request->query('status') == "unblocked")
+                return User::where('admin', 0)->get();
+        }
+
+        //Nenhum dos campos preenchidos
+        return User::all();
     }
 
     public function blockUser(User $user){
@@ -42,13 +67,21 @@ class UserController extends Controller
         return view('auth.passwords.reset');
     }
 
-    public function getProfiles(){
-        $users = User::all();
+    public function getProfiles(Request $request){
+        $users = $this->profilesFilterByName($request);
         $associates = DB::table('associate_members')->where('main_user_id', Auth::user()->id)->get();
         $associate_of = DB::table('associate_members')->where('associated_user_id', Auth::user()->id)->get();
 
         return view('users.profiles', compact('users', 'associates', 'associate_of'));
+    }
 
+    public function profilesFilterByName(Request $request){
+        $name = $request->query('name');
+        if (empty($name)){
+            return User::all();
+        }
+
+        return User::where('name', 'like', "%{$name}%")->get();
     }
 
     public function getAssociates(){

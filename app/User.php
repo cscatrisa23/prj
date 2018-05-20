@@ -37,6 +37,26 @@ class User extends Authenticatable
         }
     }
 
+    public function block(){
+        $this->blocked= 1;
+        $this->save();
+    }
+
+    public function unblock(){
+        $this->blocked= 0;
+        $this->save();
+    }
+
+    public function promote(){
+        $this->admin= 1;
+        $this->save();
+    }
+
+    public function demote(){
+        $this->admin= 0;
+        $this->save();
+    }
+
     public function blockedToStr()
     {
         switch ($this->blocked) {

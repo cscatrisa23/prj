@@ -26,7 +26,7 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('/users', 'UserController@index')->name("users.list");
+Route::get('/users', 'UserController@list')->name("users.list");
 
 Route::patch('/users/{user}/block', 'UserController@blockUser')->name('users.block');
 Route::patch('/users/{user}/unblock', 'UserController@unblockUser')->name('users.unblock');
