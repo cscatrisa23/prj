@@ -6,6 +6,7 @@
         </div>
     @endif
     <div class="container">
+        <h2>{{DB::table('users')->where('id', $user->id)->value('name')}}'s accounts</h2>
         @if(count($accounts))
             <table class="table table-striped">
                 <thead>
