@@ -40,6 +40,16 @@ class UserController extends Controller
                 return User::where('admin', 0)->get();
         }
 
+        //Nome e status preenchido
+
+        //Nome e tipo preenchido
+
+        //Status e nome preenchido
+
+        //Tipo e nome preenchido
+
+        //Todos preenchidos
+
         //Nenhum dos campos preenchidos
         return User::all();
     }
