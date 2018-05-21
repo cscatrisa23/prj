@@ -22,8 +22,16 @@
                     <tr>
                         <td>{{$user->email}}</td>
                         <td>{{$user->name}}</td>
-                        <td>{{$user->typeToStr()}}</td>
-                        <td>{{$user->blockedToStr()}}</td>
+                        @if ($user->admin)
+                            <td class="user-is-admin">{{$user->typeToStr()}}</td>
+                        @else
+                            <td>{{$user->typeToStr()}}</td>
+                        @endif
+                        @if ($user->blocked)
+                            <td class="user-is-blocked">{{$user->blockedToStr()}}</td>
+                        @else
+                            <td>{{$user->blockedToStr()}}</td>
+                        @endif
                         <td>
                             <div class="form-group row">
                                 @if($user->id != Auth::id())

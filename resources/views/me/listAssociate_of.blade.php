@@ -7,8 +7,8 @@
         </div>
     @endif
     <div class="container">
-        @if(count($associatesUsers))
-            @foreach($associatesUsers as $user)
+        @if(count($associate_ofUsers))
+            @foreach($associate_ofUsers as $user)
                 <div class="card card-block bg-faded">
                     <div class="row">
                         <div class="col-md-2 col-sm-2">
@@ -26,13 +26,13 @@
                             @else
                                 <p><b>Phone Number: </b><i>Not available</i></p>
                             @endif
-
+                            <p><b>List of Accounts: </b><a href="{{route('accounts.users', $user)}}"><i>click here</i></a></p>
                         </div>
                     </div>
                 </div>
             @endforeach
         @else
-            <h2>No associates found</h2>
+            <h2>No associates of</h2>
         @endif
     </div>
 @endsection

@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Auth\Access\AuthorizationException;
 
 class IsAdmin
 {
@@ -18,7 +19,7 @@ class IsAdmin
         if ($request->user() && $request->user()->isAdministrator()) {
             return $next($request);
         }
-
-        return redirect('/home');
+        throw new AuthorizationException();
+        //return redirect('/home');
     }
 }

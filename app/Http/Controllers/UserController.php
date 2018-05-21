@@ -10,7 +10,7 @@ class UserController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('admin')->only('index', 'blockUser', 'promoteUser', 'unblockUser', 'demoteUser');
+        $this->middleware(['auth','isAdmin'])->only('list', 'blockUser', 'promoteUser', 'unblockUser', 'demoteUser');
     }
 
     public function list(Request $request){
@@ -33,7 +33,7 @@ class UserController extends Controller
         }
 
         //Somente o status preenchido
-        if ($request->filled('status') && !$request->filled('status') && !$request->filled('name')){
+        if ($request->filled('status') && !$request->filled('name') && !$request->filled('name')){
             if ($request->query('status') == "blocked")
                 return User::where('admin', 1)->get();
             if ($request->query('status') == "unblocked")
@@ -102,8 +102,8 @@ class UserController extends Controller
 
     public function getAssociate_of(){
         $associates = DB::table('associate_members')->where('associated_user_id', Auth::user()->id)->pluck('main_user_id');
-        $associatesUsers= User::find($associates);
-        return view('me.listAssociates', compact( 'associatesUsers'));
+        $associate_ofUsers= User::find($associates);
+        return view('me.listAssociate_of', compact( 'associate_ofUsers'));
     }
 
     public function changePassword(User $user){

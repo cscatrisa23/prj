@@ -38,6 +38,7 @@ class User extends Authenticatable
     }
 
     public function block(){
+        
         $this->blocked= 1;
         $this->save();
     }
