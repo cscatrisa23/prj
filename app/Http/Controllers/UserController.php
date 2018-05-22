@@ -10,7 +10,7 @@ class UserController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('admin')->only('index', 'blockUser', 'promoteUser', 'unblockUser', 'demoteUser');
+        $this->middleware(['auth','admin'])->only('list', 'blockUser', 'promoteUser', 'unblockUser', 'demoteUser');
     }
 
     public function list(Request $request){
