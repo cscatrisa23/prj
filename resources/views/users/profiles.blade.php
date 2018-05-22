@@ -44,7 +44,7 @@
                             @if(count($associate_of))
                                 @foreach($associate_of as $associate)
                                     @if ($associate->associated_user_id == $user->id)
-                                        <h1>✔️</h1>
+                                        <h1>✔</h1>
                                     @else
                                         <h1>✖</h1>️
                                     @endif

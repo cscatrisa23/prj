@@ -4,13 +4,16 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Auth;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 class UserController extends Controller
 {
     public function __construct()
     {
         $this->middleware(['auth','admin'])->only('list', 'blockUser', 'promoteUser', 'unblockUser', 'demoteUser');
+        $this->middleware('auth')->only('getProfiles', 'getAssociates', 'getAssociate_of');
     }
 
     public function list(Request $request){
@@ -138,12 +141,10 @@ class UserController extends Controller
     }
 
     public function profilesFilterByName(Request $request){
-        $name = $request->query('name');
-        if (empty($name)){
-            return User::all();
-        }
-
-        return User::where('name', 'like', "%{$name}%")->get();
+        //Somente o campo nome preenchido
+        if ($request->filled('name'))
+            return User::where('name', 'like', "%{$request->query('name')}%")->get();
+        return User::all();
     }
 
     public function getAssociates(){
@@ -154,20 +155,22 @@ class UserController extends Controller
 
     public function getAssociate_of(){
         $associates = DB::table('associate_members')->where('associated_user_id', Auth::user()->id)->pluck('main_user_id');
-        $associatesUsers= User::find($associates);
-        return view('me.listAssociates', compact( 'associatesUsers'));
+        $associate_ofUsers= User::find($associates);
+        return view('me.listAssociate_of', compact( 'associate_ofUsers'));
     }
 
-    public function changePassword(User $user){
+    public function changePassword(Request $request){
 
-        $request = request();
+
 
         $validatedData=$request->validate([
             'old_password'=>'required',
             'password'=>'required|confirmed|min:6|different:old_password',
             'password_confirmation'=>'required|same:password',
         ]);
-        $user_id=Auth::user()->id;
+
+
+        $user=User::findOrFail(Auth::user()->id);
         $user->password=Hash::make($request->input('password'));
         $user->save();
     }
