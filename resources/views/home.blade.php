@@ -19,7 +19,7 @@
                                     <img href="#" width="200" height="200"  src="{{ asset('storage/profiles/' . Auth::user()->profile_photo) }}">
                                 @endif
                             </div>
-                            <div class="col-md-8 col-sm-8" style="float: left;">
+                            <div class="col-md-8 col-sm-8">
                                 <h2><b>{{Auth::user()->name}}</b></h2>
                                 <p><b>Email:</b> {{Auth::user()->email}}</p>
                                 @if($user->phone_number)
