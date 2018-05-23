@@ -14,6 +14,7 @@
                     <th>Accounts code</th>
                     <th>Account Type</th>
                     <th>Current Balance</th>
+                    <th>Delete Account</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -22,6 +23,13 @@
                         <td>{{$account->code}}</td>
                         <td>{{DB::table('account_types')->where('id', $account->account_type_id)->value('name')}}</td>
                         <td>{{$account->current_balance}}</td>
+                        <td>
+                            <form class="form" method="POST" action="{{route('account.delete', $account)}}">
+                                {{csrf_field()}}
+                                {{method_field('DELETE')}}
+                                <button  type="submit" class="btn btn-xs btn-danger">Delete</button>
+                            </form>
+                        </td>
                     </tr>
                 @endforeach
             </table>

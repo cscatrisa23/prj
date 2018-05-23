@@ -36,8 +36,7 @@
                                     <h1>✖</h1>️
                                 @endif
                             @endforeach
-                            @else
-                                <h1>✖</h1>️
+
                             @endif
                         </td>
                         <td>
@@ -49,8 +48,7 @@
                                         <h1>✖</h1>️
                                     @endif
                                 @endforeach
-                            @else
-                                <h1>✖</h1>️
+
                             @endif
                         </td>
                     </tr>

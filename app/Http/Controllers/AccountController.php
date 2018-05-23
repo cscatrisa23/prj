@@ -19,6 +19,10 @@ class AccountController extends Controller
 
             $accounts = Account::where('owner_id', $user->id)->get();
             return view('accounts.list', compact('accounts', 'user'));
+    }
 
+    public function deleteAccount(Account $account){
+        $account->deleteAccount();
+        return redirect()->back();
     }
 }
