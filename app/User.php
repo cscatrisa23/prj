@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Account;
 
 class User extends Authenticatable
 {
@@ -37,8 +38,20 @@ class User extends Authenticatable
         }
     }
 
+    public function associated_of() {
+        return $this->belongsToMany(User::class, 'associate_members', 'associated_user_id', 'main_user_id');
+    }
+
+    public function associateds() {
+        return $this->belongsToMany(User::class, 'associate_members', 'main_user_id', 'associated_user_id');
+    }
+
+    public function allAccounts() {
+        return $this->hasMany('Account', 'owner_id');
+    }
+
+
     public function block(){
-        
         $this->blocked= 1;
         $this->save();
     }

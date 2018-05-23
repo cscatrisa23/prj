@@ -12,11 +12,10 @@ class AccountController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['auth', 'associateOf'])->only('getUserAccounts');
+        $this->middleware(['auth', 'associateOf'])->only('getUserAccounts', 'getUserAccountsOpen', 'getUserAccountsClose');
     }
 
     public function getUserAccounts(User $user){
-
             $accounts = Account::where('owner_id', $user->id)->get();
             return view('accounts.list', compact('accounts', 'user'));
     }
@@ -25,4 +24,15 @@ class AccountController extends Controller
         $account->deleteAccount();
         return redirect()->back();
     }
+    public function getUserAccountsOpen(User $user){
+        $accounts = Account::where('owner_id', $user->id)->whereNull('deleted_at')->get();
+        return view('accounts.list', compact('accounts', 'user'));
+    }
+    public function getUserAccountsClose(User $user){
+        $accounts = Account::where('owner_id', $user->id)->whereNotNull('deleted_at')->get();
+        return view('accounts.list', compact('accounts', 'user'));
+    }
+
+
+
 }

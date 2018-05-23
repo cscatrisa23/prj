@@ -52,10 +52,10 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|regex:/^[a-zA-Z ]+$/|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
-            'phone' => 'nullable|regex:/^(\+\d{2,3})?\s*\d{3}\s*\d{3}\s*\d{3}$/',
+            'phone' => 'nullable|regex:/^[0-9 +\s]+$/',
             'profile_photo' => 'nullable|mimes:jpeg,bmp,png,jpg'
         ]);
     }

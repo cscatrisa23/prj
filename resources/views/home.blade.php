@@ -3,6 +3,9 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-10">
+                @if (isset($error))
+                    <p class="alert alert-danger">{{ $error }}</p>
+                @endif
                 <div class="card">
                     <div class="card-header">Dashboard</div>
                     <div class="card-body">
@@ -22,7 +25,7 @@
                             <div class="col-md-8 col-sm-8">
                                 <h2><b>{{Auth::user()->name}}</b></h2>
                                 <p><b>Email:</b> {{Auth::user()->email}}</p>
-                                @if($user->phone_number)
+                                @if(Auth::user()->phone_number)
                                     <p><b>Phone Number: </b>{{Auth::user()->phone_number}}</p>
                                 @else
                                     <p><b>Phone Number: </b><i>Not available</i></p>
