@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\Response;
 
 class IsAdmin
 {
@@ -20,7 +21,8 @@ class IsAdmin
         if ($request->user() && $request->user()->isAdministrator()) {
             return $next($request);
         }
-        throw new AuthorizationException();
+        $error = "You don't have the permission to see the list of Users!'";
+        return Response::make(view('home', compact('error')), 403);
         //return redirect('/home');
     }
 }

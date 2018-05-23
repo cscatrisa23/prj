@@ -39,7 +39,7 @@ Route::patch('/me/password', 'UserController@changePassword') ->name('users.chan
 Route::get('/profiles', 'UserController@getProfiles')->name('users.profiles');
 
 Route::get('/me/associates', 'UserController@getAssociates')->name('users.associates');
-Route::get('/me/associate_of', 'UserController@getAssociate_of')->name('users.associate_of');
+Route::get('/me/associate-of', 'UserController@getAssociate_of')->name('users.associate_of');
 
 Route::get('/accounts/{user}', 'AccountController@getUserAccounts')->name('accounts.users');
 Route::get('/accounts/{user}/opened', 'AccountController@getUserAccountsOpen')->name('accountsOpen.users');

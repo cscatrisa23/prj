@@ -148,21 +148,16 @@ class UserController extends Controller
     }
 
     public function getAssociates(){
-        $associates = DB::table('associate_members')->where('main_user_id', Auth::user()->id)->pluck('associated_user_id');
-        $associatesUsers= User::find($associates);
+        $associatesUsers= Auth::user()->associateds;
         return view('me.listAssociates', compact( 'associatesUsers'));
     }
 
     public function getAssociate_of(){
-        $associates = DB::table('associate_members')->where('associated_user_id', Auth::user()->id)->pluck('main_user_id');
-        $associate_ofUsers= User::find($associates);
+        $associate_ofUsers= Auth::user()->associated_of;
         return view('me.listAssociate_of', compact( 'associate_ofUsers'));
     }
 
     public function changePassword(Request $request){
-
-
-
         $validatedData=$request->validate([
             'old_password'=>'required',
             'password'=>'required|confirmed|min:6|different:old_password',
