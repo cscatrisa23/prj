@@ -36,9 +36,6 @@
                                     <h1>✖</h1>️
                                 @endif
                             @endforeach
-                            @else
-                                <h1>✖</h1>️
-                            @endif
                         </td>
                         <td>
                             @if(count($associate_of))
@@ -49,9 +46,6 @@
                                         <h1>✖</h1>️
                                     @endif
                                 @endforeach
-                            @else
-                                <h1>✖</h1>️
-                            @endif
                         </td>
                     </tr>
                 @endforeach
