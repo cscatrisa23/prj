@@ -6,6 +6,11 @@
                 @if (isset($error))
                     <p class="alert alert-danger">{{ $error }}</p>
                 @endif
+                    @if(session()->has('message'))
+                        <div class="alert alert-success">
+                            {{ session()->get('message') }}
+                        </div>
+                    @endif
                 <div class="card">
                     <div class="card-header">Dashboard</div>
                     <div class="card-body">

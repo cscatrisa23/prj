@@ -32,7 +32,7 @@ class User extends Authenticatable
     {
         switch ($this->admin) {
             case 0:
-                return 'User';
+                return 'Normal';
             case 1:
                 return 'Administrator';
         }

@@ -7,6 +7,10 @@
     @endif
     <div class="container">
         @if(count($users))
+            <form action="{{action('UserController@getProfiles')}}" method="GET">
+                <input name="name" placeholder="Name">
+                <input type="submit" class="btn-primary" value="Search" >
+            </form>
             <table class="table table-striped">
                 <thead>
                 <tr>
@@ -32,11 +36,12 @@
                             @foreach($associates as $associate)
                                 @if ($associate->associated_user_id == $user->id)
                                     <h1>✔️</h1>
+                                    @break
                                 @else
                                     <h1>✖</h1>️
+                                    @break
                                 @endif
                             @endforeach
-
                             @endif
                         </td>
                         <td>
@@ -44,11 +49,12 @@
                                 @foreach($associate_of as $associate)
                                     @if ($associate->associated_user_id == $user->id)
                                         <h1>✔️</h1>
+                                        @break
                                     @else
                                         <h1>✖</h1>️
+                                        @break
                                     @endif
                                 @endforeach
-
                             @endif
                         </td>
                     </tr>

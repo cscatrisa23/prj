@@ -93,9 +93,9 @@
 
 
                 <div class="links">
-                    <a>Number of Users: {{DB::table('users')->count()}}</a>
-                    <a>Number of Accounts:  {{DB::table('accounts')->count()}}</a>
-                    <a>Number of movements:  {{DB::table('movements')->count()}}</a>
+                    <a>Number of Users: {{$numberOfUsers}}</a>
+                    <a>Number of Accounts:  {{$numberOfAccounts}}</a>
+                    <a>Number of movements:  {{$numberOfMovements}}</a>
                 </div>
 
             </div>

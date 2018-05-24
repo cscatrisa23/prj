@@ -7,6 +7,12 @@
     @endif
     <div class="container">
         @if(count($users))
+            <form action="{{action('UserController@list')}}" method="GET">
+                <input name="name" placeholder="Name">
+                <input name="type" placeholder="Type">
+                <input name="status" placeholder="Status">
+                <input type="submit" class="btn-primary" value="Search" >
+            </form>
             <table class="table table-striped">
                 <thead>
                 <tr>

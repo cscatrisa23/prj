@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Rules\SameEmail;
+use App\Rules\VerifyOldPassword;
 use App\User;
 use Auth;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -13,7 +15,7 @@ class UserController extends Controller
     public function __construct()
     {
         $this->middleware(['auth','admin'])->only('list', 'blockUser', 'promoteUser', 'unblockUser', 'demoteUser');
-        $this->middleware('auth')->only('getProfiles', 'getAssociates', 'getAssociate_of');
+        $this->middleware('auth')->only('getProfiles', 'getAssociates', 'getAssociate_of', 'changePassword');
     }
 
     public function list(Request $request){
@@ -110,6 +112,7 @@ class UserController extends Controller
     }
 
     public function blockUser(User $user){
+
         $user->block();
         return redirect()->back();
     }
@@ -129,7 +132,7 @@ class UserController extends Controller
     }
 
     public function changePasswordForm(){
-        return view('auth.passwords.reset');
+        return view('auth.passwords.changePasswordForm');
     }
 
     public function getProfiles(Request $request){
@@ -158,15 +161,18 @@ class UserController extends Controller
     }
 
     public function changePassword(Request $request){
-        $validatedData=$request->validate([
-            'old_password'=>'required',
-            'password'=>'required|confirmed|min:6|different:old_password',
+
+        $validated=$request->validate([
+            'old_password'=>['required',new VerifyOldPassword],
+            'email' => new SameEmail,
+            'password'=>'required|confirmed|min:3|different:old_password',
             'password_confirmation'=>'required|same:password',
         ]);
-
 
         $user=User::findOrFail(Auth::user()->id);
         $user->password=Hash::make($request->input('password'));
         $user->save();
+
+        redirect('home')->with('message', 'Password Changed');
     }
 }
