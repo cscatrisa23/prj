@@ -46,13 +46,13 @@
                         <td>
                             <div class="form-group row">
                                 @if($user->blocked==0)
-                                    <form class="form" method="POST" action="{{route('users.block', $user)}}">
+                                    <form style="padding-right: 2px" class="form" method="POST" action="{{route('users.block', $user)}}">
                                         {{csrf_field()}}
                                         {{method_field('PATCH')}}
                                         <button  type="submit" class="btn btn-xs btn-danger">Block</button>
                                     </form>
                                 @else
-                                    <form class="form" method="POST" action="{{route('users.unblock', $user)}}">
+                                    <form style="padding-right: 2px" class="form" method="POST" action="{{route('users.unblock', $user)}}">
                                         {{csrf_field()}}
                                         {{method_field('PATCH')}}
                                         <button  type="submit" class="btn btn-xs btn-primary">Unblock</button>

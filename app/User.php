@@ -46,9 +46,6 @@ class User extends Authenticatable
         return $this->belongsToMany(User::class, 'associate_members', 'main_user_id', 'associated_user_id');
     }
 
-    public function allAccounts() {
-        return $this->hasMany('Account', 'owner_id');
-    }
 
     public function block(){
         $this->blocked= 1;
@@ -90,5 +87,9 @@ class User extends Authenticatable
     public function isUser()
     {
         return $this->admin == '0';
+    }
+
+    public function allMovements(){
+        $this->hasMany('App\Movement', 'account_id');
     }
 }

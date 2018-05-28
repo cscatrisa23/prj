@@ -44,7 +44,9 @@ Route::get('/me/associate-of', 'UserController@getAssociate_of')->name('users.as
 
 Route::get('/accounts/{user}', 'AccountController@getUserAccounts')->name('accounts.users');
 
-Route::delete('/account/{account}', 'AccountController@deleteAccount')->name('account.delete');
 Route::get('/accounts/{user}/opened', 'AccountController@getUserAccountsOpen')->name('accountsOpen.users');
 Route::get('/accounts/{user}/closed', 'AccountController@getUserAccountsClose')->name('accountsClose.users');
+Route::delete('/account/{account}', 'AccountController@deleteAccount')->name('account.delete');
 
+Route::patch('/account/{account}/close', 'AccountController@closeAccount')->name('account.close');
+Route::patch('/account/{account}/reopen', 'AccountController@reopenAccount')->name('account.reopen');

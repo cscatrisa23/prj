@@ -1,12 +1,27 @@
 @extends('layouts.app')
 @section('content')
-    @if (session('status'))
-        <div class="alert alert-success">
-            {{ session('status') }}
-        </div>
-    @endif
     <div class="container">
+        @if (session('status'))
+            <div class="alert alert-success">
+                {{ session('status') }}
+            </div>
+        @endif
+            @if (session('error'))
+                <div class="alert alert-danger">
+                    {{ session('error') }}
+                </div>
+            @endif
         <h2>{{DB::table('users')->where('id', $user->id)->value('name')}}'s accounts</h2>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Status
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                    <a class="dropdown-item" href="{{route('accountsClose.users', $user)}}">Closed Accounts</a>
+                    <a class="dropdown-item" href="{{route('accountsOpen.users', $user)}}">Open Accounts</a>
+                    <a class="dropdown-item" href="{{route('accounts.users', $user)}}">All Accounts</a>
+                </div>
+            </div>
         @if(count($accounts))
             <table class="table table-striped">
                 <thead>
@@ -14,7 +29,9 @@
                     <th>Accounts code</th>
                     <th>Account Type</th>
                     <th>Current Balance</th>
-                    <th>Delete Account</th>
+                    <th>Status</th>
+                    <th>Number of Movements</th>
+                    <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -24,11 +41,38 @@
                         <td>{{DB::table('account_types')->where('id', $account->account_type_id)->value('name')}}</td>
                         <td>{{$account->current_balance}}</td>
                         <td>
-                            <form class="form" method="POST" action="{{route('account.delete', $account)}}">
-                                {{csrf_field()}}
-                                {{method_field('DELETE')}}
-                                <button  type="submit" class="btn btn-xs btn-danger">Delete</button>
-                            </form>
+                            @if($account->isOpen())
+                                <span>Open</span>
+                            @else
+                                <span>Closed</span>
+                            @endif
+                        </td>
+                        <td>{{count($account->movements)}}</td>
+                        <td>
+                            @if (Auth::user()->can('deleteCloseOrReopen', $account))
+                                <div class="form-group row">
+                                     <form style="padding-right: 2px" class="form" method="POST" action="{{route('account.delete', $account)}}">
+                                         {{csrf_field()}}
+                                         {{method_field('DELETE')}}
+                                        <button  type="submit" class="btn btn-xs btn-danger">Delete</button>
+                                    </form>
+                                    @if($account->isOpen())
+                                        <form class="form" method="POST" action="{{route('account.close', $account)}}">
+                                            {{csrf_field()}}
+                                            {{method_field('PATCH')}}
+                                            <button  type="submit" class="btn btn-xs btn-danger">Close</button>
+                                        </form>
+                                    @else
+                                        <form class="form" method="POST" action="{{route('account.reopen', $account)}}">
+                                            {{csrf_field()}}
+                                            {{method_field('PATCH')}}
+                                            <button  type="submit" class="btn btn-xs btn-primary">Open</button>
+                                        </form>
+                                    @endif
+                                </div>
+                            @else
+                                <span>Not allowed</span>
+                            @endif
                         </td>
                     </tr>
                 @endforeach
