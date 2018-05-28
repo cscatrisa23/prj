@@ -6,16 +6,19 @@ use App\Rules\SameEmail;
 use App\Rules\VerifyOldPassword;
 use App\User;
 use Auth;
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Intervention\Image\ImageManagerStatic as Image;
+
+
+
 class UserController extends Controller
 {
     public function __construct()
     {
         $this->middleware(['auth','admin'])->only('list', 'blockUser', 'promoteUser', 'unblockUser', 'demoteUser');
-        $this->middleware('auth')->only('getProfiles', 'getAssociates', 'getAssociate_of', 'changePassword');
+        $this->middleware('auth')->only('getProfiles', 'getAssociates', 'getAssociate_of', 'changePassword', 'editMyProfile', 'showEditMyProfile');
     }
 
     public function list(Request $request){
@@ -121,6 +124,7 @@ class UserController extends Controller
         $user->unblock();
         return redirect()->back();
     }
+
     public function promoteUser(User $user){
         $user->promote();
         return redirect()->back();
@@ -137,10 +141,10 @@ class UserController extends Controller
 
     public function getProfiles(Request $request){
         $users = $this->profilesFilterByName($request);
+        $encontrou=false;
         $associates = DB::table('associate_members')->where('main_user_id', Auth::user()->id)->get();
         $associate_of = DB::table('associate_members')->where('associated_user_id', Auth::user()->id)->get();
-
-        return view('users.profiles', compact('users', 'associates', 'associate_of'));
+        return view('users.profiles', compact('users', 'associates', 'associate_of', 'encontrou'));
     }
 
     public function profilesFilterByName(Request $request){
@@ -155,6 +159,44 @@ class UserController extends Controller
         return view('me.listAssociates', compact( 'associatesUsers'));
     }
 
+    public function editMyProfile(Request $request){
+        $user = Auth::user();
+        $filename = null;
+        $validatedData= $request->validate([
+            'name' => 'required|string|regex:/^[a-zA-Z ]+$/|max:255',
+            'email' => 'required|email|unique:users,email,'.$user->id,
+            'phone' => 'nullable|regex:/^[0-9 +\s]+$/',
+            'profile_photo' => 'nullable|mimes:jpeg,bmp,png,jpg'
+        ]);
+
+        if(array_key_exists('profile_photo', $validatedData)) {
+            $avatar = $validatedData['profile_photo'];
+            do {
+                $filename = str_random(32) . '.' . $avatar->getClientOriginalExtension();
+            }while(count(User::where('profile_photo', $filename)->get())>0);
+            Image::make($avatar)->resize(300,300)->save(storage_path('app/public/profiles/'.$filename));
+        }
+        if ($validatedData['name']!=null) {
+            $user->name=$validatedData['name'];
+        }
+        if ($validatedData['email']!=null) {
+            $user->email=$validatedData['email'];
+        }
+        if (array_key_exists('phone', $validatedData) && $validatedData['phone']!=null) {
+            $user->phone=$validatedData['phone'];
+        }
+        if (array_key_exists('profile_photo', $validatedData) && $validatedData['profile_photo']!=null) {
+            $user->profile_photo=$filename;
+        }
+        $user->save();
+        return redirect()->route('home')->with('message', 'User updated with success!');
+    }
+
+    public function showEditMyProfile(){
+        $user = Auth::user();
+        return view('me.editProfile', compact('user'))->with('token');
+    }
+
     public function getAssociate_of(){
         $associate_ofUsers= Auth::user()->associated_of;
         return view('me.listAssociate_of', compact( 'associate_ofUsers'));
@@ -162,7 +204,7 @@ class UserController extends Controller
 
     public function changePassword(Request $request){
 
-        $validated=$request->validate([
+        $request->validate([
             'old_password'=>['required',new VerifyOldPassword],
             'email' => new SameEmail,
             'password'=>'required|confirmed|min:3|different:old_password',
@@ -172,7 +214,6 @@ class UserController extends Controller
         $user=User::findOrFail(Auth::user()->id);
         $user->password=Hash::make($request->input('password'));
         $user->save();
-
-        redirect('home')->with('message', 'Password Changed');
+        return redirect()->route('home')->with('message', 'Password Changed');
     }
 }

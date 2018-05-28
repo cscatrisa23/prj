@@ -1,5 +1,6 @@
 <?php
 
+use App\User;
 use Illuminate\Database\Seeder;
 
 class UsersTableSeeder extends Seeder
@@ -8,6 +9,7 @@ class UsersTableSeeder extends Seeder
     private $numberOfNonAdminUsers = 20;
     private $numberOfAdminUsers = 5;
     private $numberOfBlockedUsers = 5;
+    private $files = [];
 
     /**
      * Run the database seeds.
@@ -29,39 +31,41 @@ class UsersTableSeeder extends Seeder
         }
         Storage::makeDirectory($this->photoPath);
 
+        $this->files = collect(File::files(database_path('seeds/profiles')));
+
         // Disclaimer: I'm using faker here because Model classes are developed by students
         $faker = Faker\Factory::create('pt_PT');
-
+        factory(User::class, 1)->create([
+            'email' => 'admin@ainet.pt',
+            'password' => bcrypt('123'),
+            'admin' => true
+        ]);
+        factory(User::class, 1)->create([
+            'email' => 'user@ainet.pt',
+            'password' => bcrypt('123'),
+            'admin' => false
+        ]);
 
         $this->command->info('Creating '.$this->numberOfNonAdminUsers.' active users...');
-        $bar = $this->command->getOutput()->createProgressBar($this->numberOfNonAdminUsers);
         for ($i = 0; $i < $this->numberOfNonAdminUsers; ++$i) {
             DB::table('users')->insert($this->fakeUser($faker));
-            $bar->advance();
         }
-        $bar->finish();
         $this->command->info('');
 
         $this->command->info('Creating '.$this->numberOfAdminUsers.' active admins...');
-        $bar = $this->command->getOutput()->createProgressBar($this->numberOfAdminUsers);
         for ($i = 0; $i < $this->numberOfAdminUsers; ++$i) {
             $user = $this->fakeUser($faker);
             $user['admin'] = true;
             DB::table('users')->insert($user);
-            $bar->advance();
         }
-        $bar->finish();
         $this->command->info('');
 
         $this->command->info('Creating '.$this->numberOfBlockedUsers.' blocked users...');
-        $bar = $this->command->getOutput()->createProgressBar($this->numberOfBlockedUsers);
         for ($i = 0; $i < $this->numberOfBlockedUsers; ++$i) {
             $user = $this->fakeUser($faker);
             $user['blocked'] = true;
             DB::table('users')->insert($user);
-            $bar->advance();
         }
-        $bar->finish();
         $this->command->info('');
     }
 
@@ -70,16 +74,22 @@ class UsersTableSeeder extends Seeder
         static $password;
         $createdAt = Carbon\Carbon::now()->subDays(30);
         $updatedAt = $faker->dateTimeBetween($createdAt);
+        $profile_photo = null;
+        if ($faker->boolean) {
+            $file = $this->files->random();
+            Storage::makeDirectory('app/'.$this->photoPath);
+            $targetDir = storage_path('app/'.$this->photoPath);
+            File::copy($file->getPathname(), $targetDir.'/'.$file->getFilename());
+            $profile_photo = $file->getFilename();
+        }
+
         return [
             'name' => $faker->name,
             'email' => $faker->unique()->safeEmail,
             'password' => $password ?: $password = bcrypt('secret'),
             'remember_token' => str_random(10),
             'phone' => $faker->randomElement([null, $faker->phoneNumber]),
-            'profile_photo' => $faker->randomElement([
-                null,
-                $faker->image(storage_path('app/'.$this->photoPath), 180, 180, 'people', false)
-            ]),
+            'profile_photo' => $profile_photo,
             'created_at' => $createdAt,
             'updated_at' => $updatedAt,
         ];

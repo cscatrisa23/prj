@@ -32,6 +32,9 @@ Route::patch('/users/{user}/demote', 'UserController@demoteUser')->name('users.d
 Route::get('/me/password','Auth\ResetPasswordController@showResetForm')->name('users.changePasswordForm');
 Route::patch('/me/password', 'UserController@changePassword') ->name('users.changePassword');
 
+Route::get('/me/profile', 'UserController@showEditMyProfile')->name('users.showEditProfile');
+Route::put('/me/profile', 'UserController@editMyProfile')->name('users.editProfile');
+
 Route::get('/profiles', 'UserController@getProfiles')->name('users.profiles');
 
 Route::get('/me/associates', 'UserController@getAssociates')->name('users.associates');
@@ -42,3 +45,4 @@ Route::get('/accounts/{user}', 'AccountController@getUserAccounts')->name('accou
 Route::delete('/account/{account}', 'AccountController@deleteAccount')->name('account.delete');
 Route::get('/accounts/{user}/opened', 'AccountController@getUserAccountsOpen')->name('accountsOpen.users');
 Route::get('/accounts/{user}/closed', 'AccountController@getUserAccountsClose')->name('accountsClose.users');
+

@@ -33,28 +33,40 @@
                         <td>{{$user->name}}</td>
                         <td>
                             @if(count($associates))
-                            @foreach($associates as $associate)
-                                @if ($associate->associated_user_id == $user->id)
-                                    <h1>✔️</h1>
-                                    @break
-                                @else
-                                    <h1>✖</h1>️
-                                    @break
-                                @endif
-                            @endforeach
+                                @php
+                                    $encontrou=false;
+                                @endphp
+                                @foreach($associates as $associate)
+                                    @if ($associate->associated_user_id == $user->id)
+                                        @php
+                                            $encontrou=true;
+                                        @endphp
+                                    @endif
+                                @endforeach
+                            @endif
+                            @if($encontrou)
+                                <span>associate</span>
+                            @else
+                                <span>-----</span>
                             @endif
                         </td>
                         <td>
                             @if(count($associate_of))
+                                @php
+                                    $encontrou=false;
+                                @endphp
                                 @foreach($associate_of as $associate)
-                                    @if ($associate->associated_user_id == $user->id)
-                                        <h1>✔️</h1>
-                                        @break
-                                    @else
-                                        <h1>✖</h1>️
-                                        @break
+                                    @if ($associate->main_user_id == $user->id)
+                                        @php
+                                            $encontrou=true;
+                                        @endphp
                                     @endif
                                 @endforeach
+                            @endif
+                            @if($encontrou)
+                                <span>associate of</span>
+                            @else
+                                <span>-----</span>
                             @endif
                         </td>
                     </tr>
