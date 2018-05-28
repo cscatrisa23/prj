@@ -6,9 +6,13 @@ use App\Rules\SameEmail;
 use App\Rules\VerifyOldPassword;
 use App\User;
 use Auth;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Response;
+use App\Policies\UserPolicy;
+
 use Intervention\Image\ImageManagerStatic as Image;
 
 
@@ -121,7 +125,12 @@ class UserController extends Controller
     }
 
     public function unblockUser(User $user){
-        $user->unblock();
+        if ($user->can('unblock')){
+            $user->unblock();
+        }else{
+            $error = "You don't have the permission to see the list of Users!'";
+            return Response::make(view('home', compact('error')), 403);
+        }
         return redirect()->back();
     }
 

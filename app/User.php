@@ -50,7 +50,6 @@ class User extends Authenticatable
         return $this->hasMany('Account', 'owner_id');
     }
 
-
     public function block(){
         $this->blocked= 1;
         $this->save();

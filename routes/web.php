@@ -11,30 +11,32 @@
 |
 */
 
-
+//US.1
 Route::get('/', 'WelcomeController@index');
 
+//US.2 e US.3
+Auth::routes();
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
-
+//US.5 e US.6
 Route::get('/users', 'UserController@list')->name("users.list");
 
+//US.7
 Route::patch('/users/{user}/block', 'UserController@blockUser')->name('users.block');
 Route::patch('/users/{user}/unblock', 'UserController@unblockUser')->name('users.unblock');
 Route::patch('/users/{user}/promote', 'UserController@promoteUser')->name('users.promote');
 Route::patch('/users/{user}/demote', 'UserController@demoteUser')->name('users.demote');
 
-Route::get('/me/password','Auth\ResetPasswordController@showResetForm')->name('users.changePasswordForm');
+//US.9
+Route::get('/me/password','Auth\ResetPasswordController@changePassowordForm')->name('users.changePasswordForm');
 Route::patch('/me/password', 'UserController@changePassword') ->name('users.changePassword');
 
 Route::get('/me/profile', 'UserController@showEditMyProfile')->name('users.showEditProfile');
 Route::put('/me/profile', 'UserController@editMyProfile')->name('users.editProfile');
 
+//US.11
 Route::get('/profiles', 'UserController@getProfiles')->name('users.profiles');
 
 Route::get('/me/associates', 'UserController@getAssociates')->name('users.associates');

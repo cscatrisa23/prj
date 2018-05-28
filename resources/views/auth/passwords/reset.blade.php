@@ -29,7 +29,6 @@
 
                         <div class="form-group row">
                             <label for="old_password" class="col-md-4 col-form-label text-md-right">{{ __('Old Password') }}</label>
-
                             <div class="col-md-6">
                                 <input id="old_password" type="password" class="form-control{{ $errors->has('old_password') ? ' is-invalid' : '' }}" name="old_password" required>
 
