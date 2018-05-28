@@ -1,11 +1,16 @@
 @extends('layouts.app')
 @section('content')
-    @if (session('status'))
-        <div class="alert alert-success">
-            {{ session('status') }}
-        </div>
-    @endif
     <div class="container">
+        @if (session('errors'))
+            <div class="alert alert-danger">
+                {{ session('errors') }}
+            </div>
+        @endif
+        @if (session('status'))
+            <div class="alert alert-success">
+                {{ session('status') }}
+            </div>
+        @endif
         @if(count($users))
             <form action="{{action('UserController@list')}}" method="GET">
                 <input name="name" placeholder="Name">
@@ -40,36 +45,31 @@
                         @endif
                         <td>
                             <div class="form-group row">
-                                @if($user->id != Auth::id())
-                                    @if($user->blocked==0)
-                                        <form class="form" method="POST" action="{{route('users.block', $user)}}">
-                                            {{csrf_field()}}
-                                            {{method_field('PATCH')}}
-                                            <button  type="submit" class="btn btn-xs btn-danger">Block</button>
-                                        </form>
-                                    @else
-
-                                        <form class="form" method="POST" action="{{route('users.unblock', $user)}}">
-                                            {{csrf_field()}}
-                                            {{method_field('PATCH')}}
-                                            <button  type="submit" class="btn btn-xs btn-primary">Unblock</button>
-                                        </form>
-                                    @endif
-                                    @if($user->admin==0)
-                                        <form class="form" method="POST" action="{{route('users.promote', $user)}}">
-                                            {{csrf_field()}}
-                                            {{method_field('PATCH')}}
-                                            <button  type="submit" class="btn btn-xs btn-primary">Promote</button>
-                                        </form>
-                                    @else
-                                        <form class="form" method="POST" action="{{route('users.demote', $user)}}">
-                                            {{csrf_field()}}
-                                            {{method_field('PATCH')}}
-                                            <button  type="submit" class="btn btn-xs btn-danger">Demote</button>
-                                        </form>
-                                    @endif
+                                @if($user->blocked==0)
+                                    <form class="form" method="POST" action="{{route('users.block', $user)}}">
+                                        {{csrf_field()}}
+                                        {{method_field('PATCH')}}
+                                        <button  type="submit" class="btn btn-xs btn-danger">Block</button>
+                                    </form>
                                 @else
-                                    <p>No actions available!</p>
+                                    <form class="form" method="POST" action="{{route('users.unblock', $user)}}">
+                                        {{csrf_field()}}
+                                        {{method_field('PATCH')}}
+                                        <button  type="submit" class="btn btn-xs btn-primary">Unblock</button>
+                                    </form>
+                                @endif
+                                @if($user->admin==0)
+                                    <form class="form" method="POST" action="{{route('users.promote', $user)}}">
+                                        {{csrf_field()}}
+                                        {{method_field('PATCH')}}
+                                        <button  type="submit" class="btn btn-xs btn-primary">Promote</button>
+                                    </form>
+                                @else
+                                    <form class="form" method="POST" action="{{route('users.demote', $user)}}">
+                                        {{csrf_field()}}
+                                        {{method_field('PATCH')}}
+                                        <button  type="submit" class="btn btn-xs btn-danger">Demote</button>
+                                    </form>
                                 @endif
                             </div>
                         </td>

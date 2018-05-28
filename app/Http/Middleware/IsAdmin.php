@@ -14,7 +14,6 @@ class IsAdmin
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
      * @return mixed
-     * @throws AuthorizationException
      */
     public function handle($request, Closure $next)
     {

@@ -21,7 +21,8 @@ class UserController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['auth','admin'])->only('list', 'blockUser', 'promoteUser', 'unblockUser', 'demoteUser');
+        $this->middleware(['auth','admin'])->only('list');
+        $this->middleware(['auth', 'admin','canPerformAction'])->only('demoteUser', 'blockUser', 'unblockUser', 'promoteUser');
         $this->middleware('auth')->only('getProfiles', 'getAssociates', 'getAssociate_of', 'changePassword', 'editMyProfile', 'showEditMyProfile');
     }
 
@@ -119,29 +120,23 @@ class UserController extends Controller
     }
 
     public function blockUser(User $user){
-
         $user->block();
-        return redirect()->back();
+        return redirect()->back()->with('status', 'User '. $user->name. ' blocked with success!');
     }
 
     public function unblockUser(User $user){
-        if ($user->can('unblock')){
-            $user->unblock();
-        }else{
-            $error = "You don't have the permission to see the list of Users!'";
-            return Response::make(view('home', compact('error')), 403);
-        }
-        return redirect()->back();
+       $user->unblock();
+       return redirect()->back()->with('status', 'User '. $user->name. ' unblocked with success!');
     }
 
     public function promoteUser(User $user){
         $user->promote();
-        return redirect()->back();
+        return redirect()->back()->with('status', 'User '. $user->name. ' promoted with success!');
     }
 
     public function demoteUser(User $user){
         $user->demote();
-        return redirect()->back();
+        return redirect()->back()->with('status', 'User '. $user->name. ' demoted with success!');
     }
 
     public function changePasswordForm(){
