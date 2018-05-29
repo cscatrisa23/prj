@@ -23,6 +23,9 @@ class AccountPolicy
         return $user->id==$account->user->id;
     }
 
+    public function viewMovements(User $user, Account $account){
+        return $user->id==$account->user->id;
+    }
 
     public function accountBeDeleted(User $user, Account $account){
         return count($account->movements()->get())==0 && $account->last_movement_date==null;

@@ -39,7 +39,7 @@ class AccountController extends Controller
 
     public function deleteAccount(Account $account){
         if (Auth::user()->can('deleteCloseOrReopen', $account)){
-            $movements = $account->movements();
+
             if (Auth::user()->can('accountBeDeleted', $account)){
                 $account->delete();
                 return redirect()->back()->with('status', 'You have successfully deleted the account \''. $account->code.'\'');

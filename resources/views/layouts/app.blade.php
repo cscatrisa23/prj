@@ -72,7 +72,6 @@
                                     <a class="dropdown-item" href="{{ route('users.list') }}">{{ __('User list') }}</a>
                                 @endif
                                 <a class="dropdown-item" href="{{ route('users.profiles') }}">{{ __('Profiles') }}</a>
-                                <a class="dropdown-item" href="{{ route('movement.list') }}">{{ __('Movements list') }}</a>
                                 <a class="dropdown-item" href="{{ route('users.associates') }}">{{ __('My associates') }}</a>
                                 <a class="dropdown-item" href="{{ route('users.associate_of') }}">{{ __('Associate Of') }}</a>
                                 <a class="dropdown-item" href="{{route('accounts.users', Auth::user())}}">{{__('My accounts')}}</a>

@@ -59,7 +59,7 @@ Route::patch('/account/{account}/close', 'AccountController@closeAccount')->name
 Route::patch('/account/{account}/reopen', 'AccountController@reopenAccount')->name('account.reopen');
 
 //US.20
-Route::get('/movements/{account}','MovementController@listMovement')->name('movement.list');
+Route::get('/movements/{account}','MovementController@listMovements')->name('movement.list');
 
 //US.21
 Route::get('/movements/{account}/create','MovementController@createMovement')->name('movement.create');

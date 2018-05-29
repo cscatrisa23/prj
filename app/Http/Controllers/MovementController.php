@@ -4,13 +4,27 @@ namespace App\Http\Controllers;
 
 use App\Account;
 use App\Movement;
+use Auth;
+use Illuminate\Support\Facades\Response;
+
 use Illuminate\Http\Request;
 
 class MovementController extends Controller
 {
 
-    public function listMovements(Account $account){
+    public function __construct()
+    {
+        $this->middleware('auth')->only('listMovements');
+    }
 
+    public function listMovements(Account $account){
+        if (Auth::user()->can('viewMovements', $account)) {
+            $movements = $account->movements()->orderBy('date', 'desc')->get();
+
+            return view('movements.list', compact('movements', 'account'));
+        }
+        $error = "You can't list movements from an account that doesn't belong to you!";
+        return Response::make(view('home', compact('error')), 403);
     }
 
     protected function validator(array $data)

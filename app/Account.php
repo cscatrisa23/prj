@@ -13,7 +13,6 @@ class Account extends Model
         return $this->belongsTo('App\User', 'owner_id');
     }
 
-
     public function movements(){
         return $this->hasMany('App\Movement');
     }

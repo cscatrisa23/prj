@@ -47,7 +47,11 @@
                                 <span>Closed</span>
                             @endif
                         </td>
-                        <td>{{count($account->movements)}}</td>
+                        <td>
+                            <a href="{{route('movement.list', $account)}}">
+                                {{count($account->movements)}}
+                            </a>
+                        </td>
                         <td>
                             @if (Auth::user()->can('deleteCloseOrReopen', $account))
                                 <div class="form-group row">
