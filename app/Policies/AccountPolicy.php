@@ -31,5 +31,7 @@ class AccountPolicy
         return count($account->movements()->get())==0 && $account->last_movement_date==null;
     }
 
-
+    public function addMovement(User $user, Account $account){
+        return $user->id==$account->owner_id;
+    }
 }

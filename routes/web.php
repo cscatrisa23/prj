@@ -66,8 +66,8 @@ Route::post('account/','AccountController@store')->name('account.store');
 Route::get('/movements/{account}','MovementController@listMovements')->name('movement.list');
 
 //US.21
-Route::get('/movements/{account}/create','MovementController@createMovement')->name('movement.create');
-Route::post('/movements/{account}/create','MovementController@showCreateMovement')->name('movement.showCreateMovement');
+Route::get('/movements/{account}/create','MovementController@showCreateMovement')->name('movement.showCreateMovement');
+Route::post('/movements/{account}/create','MovementController@createMovement')->name('movement.create');
 Route::get('/movement/{movement}','MovementController@editMovement')->name('movement.edit');
 Route::put('/movement/{movement}','MovementController@updateMovement')->name('movement.update');
 Route::delete('/movement/{movement}','MovementController@destroyMovement')->name('movement.destroy');
