@@ -16,7 +16,7 @@
             <table class="table table-striped">
                 <thead>
                 <tr>
-                    <td>Account</td>
+                    <td>Account </td>
                     <td>Type</td>
                     <td>Category</td>
                     <td>Date</td>

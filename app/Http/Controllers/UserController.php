@@ -9,6 +9,7 @@ use Auth;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Response;
 use App\Policies\UserPolicy;
@@ -165,7 +166,6 @@ class UserController extends Controller
 
     public function editMyProfile(Request $request){
         $user = Auth::user();
-        $filename = null;
         $validatedData= $request->validate([
             'name' => 'required|string|regex:/^[a-zA-Z ]+$/|max:255',
             'email' => 'required|email|unique:users,email,'.$user->id,
@@ -173,12 +173,13 @@ class UserController extends Controller
             'profile_photo' => 'nullable|mimes:jpeg,bmp,png,jpg'
         ]);
 
+        $filename = null;
         if(array_key_exists('profile_photo', $validatedData)) {
             $avatar = $validatedData['profile_photo'];
             do {
                 $filename = str_random(32) . '.' . $avatar->getClientOriginalExtension();
             }while(count(User::where('profile_photo', $filename)->get())>0);
-            Image::make($avatar)->resize(300,300)->save(storage_path('app/public/profiles/'.$filename));
+            Storage::disk('public')->putFileAs('profiles', $avatar, $filename);
         }
         if ($validatedData['name']!=null) {
             $user->name=$validatedData['name'];
@@ -186,7 +187,7 @@ class UserController extends Controller
         if ($validatedData['email']!=null) {
             $user->email=$validatedData['email'];
         }
-        if (array_key_exists('phone', $validatedData) && $validatedData['phone']!=null) {
+        if (array_key_exists('phone', $validatedData)) {
             $user->phone=$validatedData['phone'];
         }
         if (array_key_exists('profile_photo', $validatedData) && $validatedData['profile_photo']!=null) {
@@ -207,7 +208,6 @@ class UserController extends Controller
     }
 
     public function changePassword(Request $request){
-
         $request->validate([
             'old_password'=>['required',new VerifyOldPassword],
             'email' => new SameEmail,

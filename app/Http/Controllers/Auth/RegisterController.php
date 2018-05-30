@@ -74,7 +74,7 @@ class RegisterController extends Controller
             do {
                 $filename = str_random(32) . '.' . $avatar->getClientOriginalExtension();
             }while(count(User::where('profile_photo', $filename)->get())>0);
-            Image::make($avatar)->resize(300,300)->save(storage_path('app/public/profiles/'.$filename));
+            Storage::disk('public')->putFileAs('profiles', $avatar, $filename);
         }
 
         return User::create([
