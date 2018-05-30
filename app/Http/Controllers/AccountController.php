@@ -16,7 +16,7 @@ class AccountController extends Controller
     public function __construct()
     {
         $this->middleware(['auth', 'associateOf'])->only('getUserAccounts', 'getUserAccountsOpen', 'getUserAccountsClose');
-        $this->middleware('auth')->only('deleteAccount', 'closeAccount', 'reopenAccount');
+        $this->middleware('auth')->only('deleteAccount', 'closeAccount', 'reopenAccount', 'create', 'store');
     }
 
     public function getUserAccounts(User $user){
@@ -76,5 +76,43 @@ class AccountController extends Controller
         return view('accounts.list', compact('accounts', 'user'));
     }
 
+
+    public function create()
+    {
+        $accountTypes= Account_type::all();
+        return view('accounts.createAccount', compact( 'accountTypes'));
+    }
+
+    public function store(Request $request)
+    {
+
+        $data=$request->validate([
+            'account_type_id' =>'required',
+            'code'=>'required|unique:accounts',
+            'date'=>'date',
+            'start_balance'=>'numeric|required',
+            'description'=>'nullable',
+        ], [
+            'account_type_id.required' => 'The account type is required',
+            'account_type_id.exists' => 'The account type already exists',
+            'code.required' => 'The code is required',
+            'date.date' => 'The date is invalid',
+            'start_balance.required'=> 'The start balance is required',
+        ]);
+
+        $account = new Account();
+        $account->fill($data);
+        $account->owner_id=Auth::user()->id;
+        $account->current_balance=$account->start_balance;
+        $account->save();
+
+
+        $data['current_balance']=$request->input('start_balance');
+        $data['owner_id']=Auth::user()->id;
+
+
+
+        return redirect()->route('accounts.users',Auth::user()->id)->with('success', 'Account added successfully!');
+    }
 
 }

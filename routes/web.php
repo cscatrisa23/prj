@@ -58,6 +58,10 @@ Route::patch('/account/{account}/close', 'AccountController@closeAccount')->name
 //US.16
 Route::patch('/account/{account}/reopen', 'AccountController@reopenAccount')->name('account.reopen');
 
+//US 17
+Route::get('account/','AccountController@create')->name('account.create');
+Route::post('account/','AccountController@store')->name('account.store');
+
 //US.20
 Route::get('/movements/{account}','MovementController@listMovements')->name('movement.list');
 
