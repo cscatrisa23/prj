@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Account;
+use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable
 {
@@ -82,6 +83,11 @@ class User extends Authenticatable
     public function isAdministrator()
     {
         return $this->admin == '1';
+    }
+    //is this associate of user?
+    //para isso o main_user id tem que ter como associated
+    public function isAssociateOf(User $user){
+        return count(DB::table('associate_members')->where('associated_user_id', $this->id)->where('main_user_id', $user->id)->get())>0;
     }
 
     public function isUser()

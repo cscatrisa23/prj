@@ -3,8 +3,12 @@
 namespace App\Providers;
 
 use App\Account;
+use App\Document;
+use App\Movement;
 use App\Policies\AccountPolicy;
+use App\Policies\MovementPolicy;
 use App\Policies\PostPolicy;
+use App\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
@@ -17,8 +21,12 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         'App\Model' => 'App\Policies\ModelPolicy',
-         User::class => UserPolicy::class,
-         Account::class => AccountPolicy::class,
+        User::class => UserPolicy::class,
+        Account::class => AccountPolicy::class,
+        User::class => AccountPolicy::class,
+        User::class => MovementPolicy::class,
+        Document::class => MovementPolicy::class,
+        Movement::class => MovementPolicy::class,
     ];
 
     /**

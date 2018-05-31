@@ -72,4 +72,10 @@ Route::get('/movement/{movement}','MovementController@editMovement')->name('move
 Route::put('/movement/{movement}','MovementController@updateMovement')->name('movement.update');
 Route::delete('/movement/{movement}','MovementController@destroyMovement')->name('movement.destroy');
 
+//US.23
+Route::get('/documents/{movement}', 'DocumentController@create')->name('document.add');
+Route::post('/documents/{movement}', 'DocumentController@store')->name('document.store');
+
+//US.24
+Route::delete('/document/{document}', 'DocumentController@delete')->name('document.delete');
 

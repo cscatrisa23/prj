@@ -15,14 +15,14 @@ class MovementController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth')->only('listMovements');
+        $this->middleware(['auth'])->only('listMovements');
     }
 
     public function listMovements(Account $account){
         if (Auth::user()->can('viewMovements', $account)) {
-            $movements = $account->movements()->orderBy('date', 'desc')->get();
+            $movements = $account->movements()->orderBy('date', 'desc')->paginate(10);
 
-            return view('movements.list', compact('movements', 'account'));
+            return view('movements.listMovs', compact('movements', 'account'));
         }
         $error = "You can't list movements from an account that doesn't belong to you!";
         return Response::make(view('home', compact('error')), 403);
