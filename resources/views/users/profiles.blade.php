@@ -34,15 +34,14 @@
                         <td>
                                 @foreach($associates as $associate)
                                     @if ($associate->associated_user_id == $user->id)
-                                            <span>associate</span>
-                                           @break
+                                        <span>associate</span>
                                     @endif
                                 @endforeach
                         </td>
                         <td>
                             @foreach($associate_of as $associate)
                                 @if ($associate->main_user_id == $user->id)
-                                    <span>associate of</span>
+                                    <span>associate-of</span>
                                 @endif
                             @endforeach
                         </td>

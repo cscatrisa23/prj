@@ -14,7 +14,6 @@
                             <input type="hidden" name="token" value="{{ $token }}">
                             <div class="form-group row">
                                 <label for="document_file" class="col-md-4 col-form-label text-md-right">{{ __('Document') }}</label>
-
                                 <div class="col-md-6">
                                     <input name="document_file" id="document_file" type="file" class="form-control{{ $errors->has('document_file') ? ' is-invalid' : '' }}" name="document_file" value="{{ old('document_file') }}" required>
 

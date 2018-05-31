@@ -22,7 +22,7 @@ class MovementController extends Controller
         if (Auth::user()->can('viewMovements', $account)) {
             $movements = $account->movements()->orderBy('date', 'desc')->paginate(10);
 
-            return view('movements.listMovs', compact('movements', 'account'));
+            return view('movements.list', compact('movements', 'account'));
         }
         $error = "You can't list movements from an account that doesn't belong to you!";
         return Response::make(view('home', compact('error')), 403);
