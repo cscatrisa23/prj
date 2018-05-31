@@ -106,11 +106,8 @@ class AccountController extends Controller
         $account->current_balance=$account->start_balance;
         $account->save();
 
-
         $data['current_balance']=$request->input('start_balance');
         $data['owner_id']=Auth::user()->id;
-
-
 
         return redirect()->route('accounts.users',Auth::user()->id)->with('success', 'Account added successfully!');
     }

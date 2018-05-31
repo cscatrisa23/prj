@@ -13,8 +13,10 @@
         @endif
 
         <div class="container">
-            <h2>Movements of account: {{$account->code}} ({{$account->user->name}})</h2>
-
+            <h1>Movements of account: {{$account->code}} ({{$account->user->name}})</h1>
+            <form style="padding-right: 2px; margin-bottom: 20px" class="form" method="GET" action="{{route('movement.create', $account)}}">
+                <button  type="submit" class="btn btn-xs btn-primary">Create Movement</button>
+            </form>
             @if(count($movements))
                 @foreach ($movements as $movement)
                     <div class="card card-block bg-faded">
@@ -37,9 +39,8 @@
                                 <p><b>Description: </b><i>No document available</i></p>
                             @endif
                             <div class="form-group row" style="margin-top: 30px">
-                                <form style="padding-right: 2px; margin-left: 15px;" class="form" method="POST" action="">
+                                <form style="padding-right: 2px; margin-left: 15px;" class="form" method="GET" action="{{route('movement.edit', $movement)}}">
                                     {{csrf_field()}}
-                                    {{method_field('PUT')}}
                                     <button  type="submit" class="btn btn-xs btn-primary">Edit</button>
                                 </form>
                                 <form style="padding-right: 2px;" class="form" method="GET" action="{{route('document.add', $movement)}}">
