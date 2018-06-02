@@ -6,6 +6,7 @@ use App\Http\Middleware\isAssociateOf;
 use App\User;
 use App\Account;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Support\Facades\Auth;
 
 class AccountPolicy
 {
@@ -24,7 +25,8 @@ class AccountPolicy
     }
 
     public function viewMovements(User $user, Account $account){
-        return $user->id==$account->user->id;
+//        return var_dump(Auth::user()->isAssociateOf($account->user));
+        return ($user->id==$account->user->id ||Auth::user()->isAssociateOf($account->user));
     }
 
     public function accountBeDeleted(User $user, Account $account){

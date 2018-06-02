@@ -189,6 +189,8 @@ class UserController extends Controller
         }
         if (array_key_exists('phone', $validatedData)) {
             $user->phone=$validatedData['phone'];
+        }else{
+            $user->phone=null;
         }
         if (array_key_exists('profile_photo', $validatedData) && $validatedData['profile_photo']!=null) {
             $user->profile_photo=$filename;

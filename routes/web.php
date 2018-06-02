@@ -66,10 +66,16 @@ Route::post('account/','AccountController@store')->name('account.store');
 Route::get('/movements/{account}','MovementController@listMovements')->name('movement.list');
 
 //US.21
-Route::get('/movements/{account}/create','MovementController@showCreateMovement')->name('movement.showCreateMovement');
-Route::post('/movements/{account}/create','MovementController@createMovement')->name('movement.create');
-Route::get('/movement/{movement}','MovementController@editMovement')->name('movement.edit');
-Route::put('/movement/{movement}','MovementController@updateMovement')->name('movement.update');
-Route::delete('/movement/{movement}','MovementController@destroyMovement')->name('movement.destroy');
+Route::get('/movements/{account}/create','MovementController@create')->name('movement.showCreateMovement');
+Route::post('/movements/{account}/create','MovementController@store')->name('movement.create');
+Route::get('/movement/{movement}','MovementController@edit')->name('movement.edit');
+Route::put('/movement/{movement}','MovementController@update')->name('movement.update');
+Route::delete('/movement/{movement}','MovementController@destroy')->name('movement.destroy');
 
+//US.23
+Route::get('/documents/{movement}', 'DocumentController@create')->name('document.add');
+Route::post('/documents/{movement}', 'DocumentController@store')->name('document.store');
+
+//US.24
+Route::delete('/document/{document}', 'DocumentController@delete')->name('document.delete');
 
