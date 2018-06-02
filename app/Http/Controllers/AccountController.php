@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Account_type;
 use App\Policies\AccountPolicy;
 use App\User;
 use Auth;
 use App\Account;
+use Hash;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Validator;
+
 
 class AccountController extends Controller
 {
@@ -105,12 +109,6 @@ class AccountController extends Controller
         $account->owner_id=Auth::user()->id;
         $account->current_balance=$account->start_balance;
         $account->save();
-
-
-        $data['current_balance']=$request->input('start_balance');
-        $data['owner_id']=Auth::user()->id;
-
-
 
         return redirect()->route('accounts.users',Auth::user()->id)->with('success', 'Account added successfully!');
     }

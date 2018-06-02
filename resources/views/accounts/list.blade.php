@@ -21,7 +21,9 @@
                     <a class="dropdown-item" href="{{route('accountsOpen.users', $user)}}">Open Accounts</a>
                     <a class="dropdown-item" href="{{route('accounts.users', $user)}}">All Accounts</a>
                 </div>
+                <a href="{{route('account.create')}}" class="btn btn-primary" style="float: right;">Create Account</a>
             </div>
+
         @if(count($accounts))
             <table class="table table-striped">
                 <thead>

@@ -42,6 +42,7 @@
                                 <p><b>Number of users that have me as an associate: </b>{{count(DB::table('associate_members')->where('associated_user_id', Auth::user()->id)->get())}}</p>
                             </div>
                         </div>
+                            <a href="{{route('account.create')}}" class="btn btn-primary" style="float: left;">Create Account</a>
                             <a href="{{route('users.showEditProfile')}}" class="btn btn-primary" style="float: right;">Edit my Profile</a>
                     </div>
                 </div>
