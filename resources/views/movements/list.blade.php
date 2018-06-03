@@ -53,6 +53,11 @@
                                     <button  type="submit" class="btn btn-xs btn-danger">Delete Document</button>
                                 </form>
                                     @endif
+                                <form  style="padding-right: 2px" class="form" method="POST" action="{{route('movement.destroy', $movement)}}">
+                                    {{csrf_field()}}
+                                    {{method_field('DELETE')}}
+                                    <button type="submit" class="btn btn-xs btn-danger">Delete Movement</button>
+                                </form>
                             </div>
                         </div>
                     </div>
