@@ -29,7 +29,7 @@
                             <p><b>Start Balance: </b>{{$movement->start_balance}}</p>
                             <p><b>End Balance: </b>{{$movement->end_balance}}</p>
                             @if($movement->document_id)
-                                <p><b>Documents: </b>{{$movement->document->original_name}}</p>
+                                <p><b>Documents: </b><a href="{{route('document.view', $movement->document)}}">{{$movement->document->original_name}}</a></p>
                             @else
                                 <p><b>Documents: </b><i>Not available</i></p>
                             @endif

@@ -79,3 +79,5 @@ Route::post('/documents/{movement}', 'DocumentController@store')->name('document
 //US.24
 Route::delete('/document/{document}', 'DocumentController@delete')->name('document.delete');
 
+//US.25
+Route::get('/document/{document}', 'DocumentController@view')->name('document.view');

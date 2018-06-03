@@ -82,4 +82,15 @@ class DocumentController extends Controller
         $error = "You can't add movements to an account that doesn't belong to you!";
         return Response::make(view('home', compact('error')), 403);
     }
+
+    public function view(Document $document)
+    {
+        $movement = $document->movement;
+        $account = $movement->account;
+        if (Auth::user()->id == $account->user->id || Auth::user()->isAssociateOf($account->user)) {
+            return Storage::download('documents/'.$movement->account_id.'/'.$movement->id.'.'.$document->type, $document->original_name);
+        }
+        $error = "You don't have enough permissions to download this document";
+        return Response::make(view('home', compact('error')), 403);
+    }
 }
