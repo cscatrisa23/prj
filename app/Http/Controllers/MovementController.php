@@ -70,7 +70,7 @@ class MovementController extends Controller
                 $movement['description'] = $data['description'];
             }
 
-            if (count(Movement::where('date','<', $movement->date)->get())){
+            if (count($account->movements()->where('date','<', $movement->date)->get())>0){
                 $movement->start_balance = $account->movements()->orderBy('id', 'desc')->orderBy('date')->orderByDesc('created_at', 'desc')->where('date', '<=', $movement->date)->first()->end_balance;
             }else{
                 $movement->start_balance= $account->start_balance;
@@ -94,9 +94,10 @@ class MovementController extends Controller
                 ]);
                 $document->save();
                 $movement->document_id = $document->id;
+                 $movement->save();
+
                 Storage::putFileAs('documents/'.$account->id.'/',$file,$movement->id.'.'.$fileExtension);
             }
-           // $movement->save();
 
             $movementsAfter = $account->movements()->where('id', '!=', $movement->id)->where('date','>', $movement->date)->orderBy('date')->orderBy('created_at')->get();
             $last_end_balance = $movement->end_balance;
@@ -113,12 +114,9 @@ class MovementController extends Controller
 
             $account->current_balance = $last_end_balance;
             $account->save();
-
-
             $movement->save();
 
             return redirect()->route('movement.list',$account->id)->with('staus', 'Movement added with success!');
-
         }else {
             $error = "You can't list movements from an account that doesn't belong to you!";
             return Response::make(view('home', compact('error')), 403);
