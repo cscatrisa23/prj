@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Http\Middleware\isAssociateOf;
+use App\Movement;
 use App\User;
 use App\Account;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -32,8 +33,12 @@ class AccountPolicy
     public function accountBeDeleted(User $user, Account $account){
         return count($account->movements()->get())==0 && $account->last_movement_date==null;
     }
-
-    public function addMovement(User $user, Account $account){
+/*
+    public function addMovement(User $user, Movement $movement){
+        return $user->id==$movement->id;
+    }
+*/
+    public function deleteMovement(User $user, Account $account){
         return $user->id==$account->owner_id;
     }
 }

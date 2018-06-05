@@ -72,6 +72,7 @@ class MovementController extends Controller
                 $movement['description'] = $data['description'];
             }
 
+
             if ($movement->type == 'expense') {
                 $movement->end_balance= $account->current_balance - $data['value'];
             } else {
@@ -81,6 +82,7 @@ class MovementController extends Controller
             $movement->save();
 
             $account->current_balance = $movement->end_balance;
+
             $account->save();
 
             if(array_key_exists('document_file', $data)) {
@@ -114,26 +116,39 @@ class MovementController extends Controller
         if (Auth::user()->can('addMovements', $movement)) {
             $movementCategories = MovementCategories::all();
             $user = $movement->account->user;
-            return view('movements.create', compact('movementCategories', 'account', 'user'))->with('token');
+            return view('movements.edit', compact('movementCategories', 'account', 'user'))->with('token');
         }
         $error = "You can't list movements from an account that doesn't belong to you!";
         return Response::make(view('home', compact('error')), 403);
     }
 
-    public function update(Movement $movement){
-
-    }
-
-    public function destroy(Movement $movement, Request $request){
+    public function update(Movement $movement, Request $request){
 
         $account = Account::findOrFail($request->route('account'));
 
         if(Auth::user()->id == $account->user->id){
 
+
+        }else {
+            $error = "You can't list movements from an account that doesn't belong to you!";
+            return Response::make(view('home', compact('error')), 403);
+        }
+    }
+
+    public function destroy(Movement $movement, Request $request){
+
+        $account = Account::findOrFail($movement->account_id);
+
+        if (Auth::user()->can('deleteMovement', $account )){
+
+            $docDelete = Document::find($movement->document_id);
+            Storage::delete('documents/'. $movement->account_id.'/'.$movement->id .'.'.$docDelete['type']);
             $movement->delete();
 
+            return redirect()->back()->with('status', 'You have successfully deleted the movement \''. $movement->id.'\'');
         }
         $error = "You can't delete movements from an account that doesn't belong to you!";
         return Response::make(view('home', compact('error')), 403);
     }
 }
+
