@@ -120,30 +120,18 @@ class MovementController extends Controller
         return Response::make(view('home', compact('error')), 403);
     }
 
-    public function update(Movement $movement, Request $request){
+    public function update(Movement $movement){
+
+    }
+
+    public function destroy(Movement $movement, Request $request){
 
         $account = Account::findOrFail($request->route('account'));
 
         if(Auth::user()->id == $account->user->id){
 
-
-        }else {
-            $error = "You can't list movements from an account that doesn't belong to you!";
-            return Response::make(view('home', compact('error')), 403);
-        }
-    }
-
-    public function destroy(Movement $movement, Request $request){
-
-        $account = Account::findOrFail($movement->account_id);
-
-        if (Auth::user()->can('deleteMovement', $account )){
-
-            $docDelete = Document::find($movement->document_id);
-            Storage::delete('documents/'. $movement->account_id.'/'.$movement->id .'.'.$docDelete['type']);
             $movement->delete();
 
-            return redirect()->back()->with('status', 'You have successfully deleted the movement \''. $movement->id.'\'');
         }
         $error = "You can't delete movements from an account that doesn't belong to you!";
         return Response::make(view('home', compact('error')), 403);

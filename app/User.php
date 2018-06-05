@@ -95,7 +95,7 @@ class User extends Authenticatable
         return $this->admin == '0';
     }
 
-    public function allMovements(){
-        $this->hasMany('App\Movement', 'account_id');
+    public function accounts(){
+        $this->hasMany('App\Account');
     }
 }

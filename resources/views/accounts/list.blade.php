@@ -30,6 +30,7 @@
                 <tr>
                     <th>Accounts code</th>
                     <th>Account Type</th>
+                    <th>Start Balance</th>
                     <th>Current Balance</th>
                     <th>Status</th>
                     <th>Number of Movements</th>
@@ -41,6 +42,7 @@
                     <tr>
                         <td>{{$account->code}}</td>
                         <td>{{DB::table('account_types')->where('id', $account->account_type_id)->value('name')}}</td>
+                        <td>{{$account->start_balance}}</td>
                         <td>{{$account->current_balance}}</td>
                         <td>
                             @if($account->isOpen())
@@ -57,6 +59,10 @@
                         <td>
                             @if (Auth::user()->can('deleteCloseOrReopen', $account))
                                 <div class="form-group row">
+                                    <form style="padding-right: 2px" class="form" method="GET" action="{{route('account.showEdit', $account)}}">
+                                        {{csrf_field()}}
+                                        <button  type="submit" class="btn btn-xs btn-primary">Edit</button>
+                                    </form>
                                      <form style="padding-right: 2px" class="form" method="POST" action="{{route('account.delete', $account)}}">
                                          {{csrf_field()}}
                                          {{method_field('DELETE')}}
