@@ -47,58 +47,41 @@ class MovementController extends Controller
     {
         $account = Account::findOrFail($request->route('account'));
 
-        if (!Account::findOrFail($account->id)){
-            $error = "You can't create a movement to an account that doesn't belong to you!";
-            return Response::make(view('home', compact('error')), 404);
-        }
-
         if(Auth::user()->id == $account->user->id){
+
             $data = $request->validate([
                 'movement_category_id' => 'required|Exists:movement_categories,id',
                 'date' => 'required|date|before:tomorrow',
                 'value' => 'required|numeric|min:0.01',
                 'description' => 'nullable|string|max:255',
-                'document_file' => 'nullable|file|mimes:pdf,png,jpeg',
-                'document_description'=> 'nullable|file',
+                'document_file' => 'nullable|file|mimes:pdf,png,jpeg|required_with:document_description',
+                'document_description'=> 'nullable|string|max:255',
             ]);
 
             $movement = new Movement();
             $movement->date=$data['date'];
             $movement->value=$data['value'];
-            $movement->description=$data['description'];
+            //$movement->description=$data['description'];
             $movement->movement_category_id=$data['movement_category_id'];
             $movement->type = MovementCategories::where('id', $data['movement_category_id'])->value('type');
             $movement->account_id = $account->id;
+            $movement->start_balance = $account->current_balance;
+            $movement->created_at= Carbon::now();
 
-
-            //TODO GASTAR 5 HORAS A FAZER DEGUG NESTA MERDA!!!
-
-            if (count(Movement::where('date','<', $movement->date)->get())){
-                $movement->start_balance = Movement::where('date','<', $movement->date)->orderBy('date', 'desc')->first()->value('start_balance');
-            }else{
-                $movement->start_balance= $account->start_balance;
+            if ($request->has('description')){
+                $movement['description'] = $data['description'];
             }
 
-            $movementsAfter = Movement::where('date','>', $movement->date)->orderBy('date', 'asc')->get();
             if ($movement->type == 'expense') {
-                foreach ($movementsAfter as $movementAfter) {
-                    $movementAfter->start_balance -= $movement->value;
-                    $movementAfter->end_balance -= $movement->value;
-                }
-                $account->current_balance -=$movement->value;
-                $movement->end_balance=$movement->start_balance - $movement->value;
-            }else{
-                foreach ($movementsAfter as $movementAfter) {
-                    $movementAfter->start_balance += $movement->value;
-                    $movementAfter->end_balance += $movement->value;
-                }
-                $account->current_balance +=$movement->value;
-                $movement->end_balance=$movement->start_balance + $movement->value;
+                $movement->end_balance= $account->current_balance - $data['value'];
+            } else {
+                $movement->end_balance = $account->current_balance + $data['value'];
             }
-            $account->save();
-
 
             $movement->save();
+
+            $account->current_balance = $movement->end_balance;
+            $account->save();
 
             if(array_key_exists('document_file', $data)) {
                 $file = $data['document_file'];
@@ -118,7 +101,7 @@ class MovementController extends Controller
 
             }
 
-            return redirect()->route('movement.list', $account)->with('success', 'Movement added successfully!');
+            return redirect()->route('movement.list',Auth::user()->id)->with('success', 'Movement added successfully!');
 
         }else {
             $error = "You can't list movements from an account that doesn't belong to you!";
@@ -137,11 +120,32 @@ class MovementController extends Controller
         return Response::make(view('home', compact('error')), 403);
     }
 
-    public function update(Movement $movement){
+    public function update(Movement $movement, Request $request){
 
+        $account = Account::findOrFail($request->route('account'));
+
+        if(Auth::user()->id == $account->user->id){
+
+
+        }else {
+            $error = "You can't list movements from an account that doesn't belong to you!";
+            return Response::make(view('home', compact('error')), 403);
+        }
     }
 
-    public function destroy(Movement $movement){
+    public function destroy(Movement $movement, Request $request){
 
+        $account = Account::findOrFail($movement->account_id);
+
+        if (Auth::user()->can('deleteMovement', $account )){
+
+            $docDelete = Document::find($movement->document_id);
+            Storage::delete('documents/'. $movement->account_id.'/'.$movement->id .'.'.$docDelete['type']);
+            $movement->delete();
+
+            return redirect()->back()->with('status', 'You have successfully deleted the movement \''. $movement->id.'\'');
+        }
+        $error = "You can't delete movements from an account that doesn't belong to you!";
+        return Response::make(view('home', compact('error')), 403);
     }
 }
