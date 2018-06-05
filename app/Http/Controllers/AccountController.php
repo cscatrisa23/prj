@@ -108,7 +108,7 @@ class AccountController extends Controller
 
 
 
-        return redirect()->route('accounts.users',Auth::user()->id)->with('success', 'Account added successfully!');
+        return redirect()->route('accounts.users',Auth::user()->id)->with('success', 'Account added with success!');
     }
 
     public function showEdit(Account $account){
@@ -120,7 +120,7 @@ class AccountController extends Controller
         return Response::make(view('home', compact('error')), 403);
     }
 
-    public function edit2(Request $request){
+    public function edit(Request $request){
         if(!$account = Account::findOrFail($request->route('account'))){
             $error = "Invalid account!";
             return Response::make(view('home', compact('error')), 404);
@@ -146,7 +146,7 @@ class AccountController extends Controller
         }
         $last_end_balance = $account->start_balance;
         //update every value
-        $movements = $account->movements()->orderBy('date', 'desc')->get()->reverse(true);
+        $movements = $account->movements()->orderBy('date', 'desc')->orderByDesc('created_at', 'desc')->get()->reverse(true);
         foreach ($movements as $movement){
             $movement->start_balance =$last_end_balance;
             if ($movement->type == "expense"){
@@ -161,7 +161,7 @@ class AccountController extends Controller
         $account->save();
 
 
-        return redirect()->route('accounts.users',Auth::user()->id)->with('success', 'Account added successfully!');
+        return redirect()->route('accounts.users',Auth::user()->id)->with('status', 'Account updated with success!');
     }
 
 

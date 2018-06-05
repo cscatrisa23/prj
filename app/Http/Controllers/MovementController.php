@@ -23,7 +23,7 @@ class MovementController extends Controller
 
     public function listMovements(Account $account){
         if (Auth::user()->can('viewMovements', $account)) {
-            $movements = $account->movements()->orderBy('date', 'desc')->paginate(10);
+            $movements = $account->movements()->orderBy('date', 'desc')->orderByDesc('created_at', 'desc')->paginate(10);
 
             return view('movements.list', compact('movements', 'account'));
         }
@@ -61,27 +61,25 @@ class MovementController extends Controller
             $movement = new Movement();
             $movement->date=$data['date'];
             $movement->value=$data['value'];
-            //$movement->description=$data['description'];
             $movement->movement_category_id=$data['movement_category_id'];
             $movement->type = MovementCategories::where('id', $data['movement_category_id'])->value('type');
             $movement->account_id = $account->id;
-            $movement->start_balance = $account->current_balance;
             $movement->created_at= Carbon::now();
 
             if ($request->has('description')){
                 $movement['description'] = $data['description'];
             }
 
-            if ($movement->type == 'expense') {
-                $movement->end_balance= $account->current_balance - $data['value'];
-            } else {
-                $movement->end_balance = $account->current_balance + $data['value'];
+            if (count(Movement::where('date','<', $movement->date)->get())){
+                $movement->start_balance = $account->movements()->orderBy('id', 'desc')->orderBy('date')->orderByDesc('created_at', 'desc')->where('date', '<=', $movement->date)->first()->end_balance;
+            }else{
+                $movement->start_balance= $account->start_balance;
             }
-
-            $movement->save();
-
-            $account->current_balance = $movement->end_balance;
-            $account->save();
+            if ($movement->type == "expense"){
+                $movement->end_balance = $movement->start_balance - $movement->value;
+            }else{
+                $movement->end_balance = $movement->start_balance + $movement->value;
+            }
 
             if(array_key_exists('document_file', $data)) {
                 $file = $data['document_file'];
@@ -97,11 +95,29 @@ class MovementController extends Controller
                 $document->save();
                 $movement->document_id = $document->id;
                 Storage::putFileAs('documents/'.$account->id.'/',$file,$movement->id.'.'.$fileExtension);
-                $movement->save();
+            }
+           // $movement->save();
 
+            $movementsAfter = $account->movements()->where('id', '!=', $movement->id)->where('date','>', $movement->date)->orderBy('date')->orderBy('created_at')->get();
+            $last_end_balance = $movement->end_balance;
+            foreach ($movementsAfter as $movementAfter){
+                $movementAfter->start_balance = $last_end_balance;
+                if ($movementAfter->type == "expense"){
+                    $movementAfter->end_balance = $movementAfter->start_balance - $movementAfter->value;
+                }else{
+                    $movementAfter->end_balance = $movementAfter->start_balance + $movementAfter->value;
+                }
+                $last_end_balance= $movementAfter->end_balance;
+                $movementAfter->save();
             }
 
-            return redirect()->route('movement.list',Auth::user()->id)->with('success', 'Movement added successfully!');
+            $account->current_balance = $last_end_balance;
+            $account->save();
+
+
+            $movement->save();
+
+            return redirect()->route('movement.list',$account->id)->with('staus', 'Movement added with success!');
 
         }else {
             $error = "You can't list movements from an account that doesn't belong to you!";

@@ -8,7 +8,7 @@
                     <div class="card-header">{{ __('Create Account') }}</div>
 
                     <div class="card-body">
-                        <form method="POST" action="{{ route('account.edit2', $account->id) }}">
+                        <form method="POST" action="{{ route('account.edit', $account->id) }}">
                             @csrf
                             {{method_field('PUT')}}
                             <div class="form-group row">

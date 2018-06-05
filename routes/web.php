@@ -64,10 +64,7 @@ Route::post('/account/','AccountController@store')->name('account.store');
 
 //US.18
 Route::get('/account/{account}','AccountController@showEdit')->name('account.showEdit');
-//Route::put('/account/{account}','AccountController@edit')->name('account.edit');
-Route::put('/account/{account}','AccountController@edit2')->name('account.edit2');
-
-
+Route::put('/account/{account}','AccountController@edit')->name('account.edit');
 
 //US.20
 Route::get('/movements/{account}','MovementController@listMovements')->name('movement.list');
@@ -88,3 +85,7 @@ Route::delete('/document/{document}', 'DocumentController@delete')->name('docume
 
 //US.25
 Route::get('/document/{document}', 'DocumentController@view')->name('document.view');
+
+//US.29
+Route::post('/me/associates', 'AssociateController@add')->name('associate.add');
+Route::delete('/me/associates/{user}', 'AssociateController@remove')->name('associate.remove');
