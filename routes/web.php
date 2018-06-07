@@ -86,6 +86,10 @@ Route::delete('/document/{document}', 'DocumentController@delete')->name('docume
 //US.25
 Route::get('/document/{document}', 'DocumentController@view')->name('document.view');
 
+//US.26
+Route::get('/dashboard/{user}','UserController@statistics')->name('user.statistics');
+
+
 //US.29
 Route::post('/me/associates', 'AssociateController@add')->name('associate.add');
 Route::delete('/me/associates/{user}', 'AssociateController@remove')->name('associate.remove');

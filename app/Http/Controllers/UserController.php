@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Account;
 use App\Rules\SameEmail;
 use App\Rules\VerifyOldPassword;
 use App\User;
-use Auth;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Response;
+
 use App\Policies\UserPolicy;
 
 use Intervention\Image\ImageManagerStatic as Image;
@@ -222,4 +225,25 @@ class UserController extends Controller
         $user->save();
         return redirect()->route('home')->with('message', 'Password Changed');
     }
+
+    public function statistics(Request $request){
+
+
+        $id= $request->route('user');
+        $accounts= Account::where('owner_id', $id)->get();
+        $numberOfAccounts = Account::where('owner_id', $id)->count();
+        $username= DB::table('users')->where('id', $id)->value('name');
+
+
+        $totalBalance=0;
+        foreach ($accounts as $account)
+        {
+            $totalBalance+=$account->current_balance;
+        }
+
+        return view('users.statistics', compact('username','numberOfAccounts','totalBalance', 'accounts'));
+    }
+
+
+
 }

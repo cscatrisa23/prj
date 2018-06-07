@@ -96,6 +96,6 @@ class User extends Authenticatable
     }
 
     public function accounts(){
-        $this->hasMany('App\Account');
+        $this->hasMany('App\Account','id', 'account_id');
     }
 }
