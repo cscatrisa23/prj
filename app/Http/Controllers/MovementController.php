@@ -33,7 +33,6 @@ class MovementController extends Controller
 
     public function create(Account $account){
 
-        //if (Auth::user()->can('addMovements', $account)) {
         if (Auth::user()->id == $account->user->id) {
             $movementCategories = MovementCategories::all();
             $user = $account->user;
@@ -94,7 +93,7 @@ class MovementController extends Controller
                 ]);
                 $document->save();
                 $movement->document_id = $document->id;
-                 $movement->save();
+                $movement->save();
 
                 Storage::putFileAs('documents/'.$account->id.'/',$file,$movement->id.'.'.$fileExtension);
             }
@@ -116,7 +115,7 @@ class MovementController extends Controller
             $account->save();
             $movement->save();
 
-            return redirect()->route('movement.list',$account->id)->with('staus', 'Movement added with success!');
+            return redirect()->route('movement.list',$account->id)->with('status', 'Movement added with success!');
         }else {
             $error = "You can't list movements from an account that doesn't belong to you!";
             return Response::make(view('home', compact('error')), 403);
@@ -125,24 +124,87 @@ class MovementController extends Controller
 
     public function edit(Movement $movement){
 
-        if (Auth::user()->can('addMovements', $movement)) {
-            $movementCategories = MovementCategories::all();
-            $user = $movement->account->user;
-            return view('movements.create', compact('movementCategories', 'account', 'user'))->with('token');
-        }
-        $error = "You can't list movements from an account that doesn't belong to you!";
-        return Response::make(view('home', compact('error')), 403);
+        $account = Account::findOrFail($movement->account_id);
+
+        if (Auth::user()->id == $account->user->id) {
+                $movementCategories = MovementCategories::all();
+                $user = $account->user;
+                return view('movements.edit', compact('movementCategories', 'account', 'user', 'movement'))->with('token');
+            }
+            $error = "You can't edit a movement to an account that doesn't belong to you!";
+            return Response::make(view('home', compact('error')), 403);
     }
 
-    public function update(Movement $movement){
-
-    }
-
-    public function destroy(Movement $movement, Request $request){
+    public function update(Movement $movement, Request $request){
 
         $account = Account::findOrFail($movement->account_id);
 
-        if (Auth::user()->can('deleteMovement', $account )){
+        if(Auth::user()->id == $account->owner_id){
+            $data = $request->validate([
+                'movement_category_id' => 'required|exists:movement_categories,id',
+                'date' => 'required|date|before:tomorrow',
+                'value' => 'required|numeric|min:0.01',
+                'description' => 'nullable|string|max:255',
+                'document_file' => 'nullable|file|mimes:pdf,png,jpeg|required_with:document_description',
+                'document_description'=> 'nullable|string|max:255',
+            ]);
+
+            $movement->date=$data['date'];
+            $movement->value=$data['value'];
+            $movement->movement_category_id=$data['movement_category_id'];
+            $movement->type = MovementCategories::where('id', $data['movement_category_id'])->value('type');
+
+
+            if ($request->has('description')){
+                $movement->description = $data['description'];
+            }
+
+            if ($movement->type == "expense"){
+                $movement->end_balance = $movement->start_balance - $movement->value;
+            }else{
+                $movement->end_balance = $movement->start_balance + $movement->value;
+            }
+
+            if ($request->has('document_file')) {
+                $file = $data['document_file'];
+                $fileExtension = $file->getClientOriginalExtension();
+                $originalFilename = $file->getClientOriginalName();
+
+                if ($movement->document_id != null) {
+                    Storage::delete('documents/' . $account->id . '/' . $movement->id . '.' . $movement->document->type);
+                    Document::where('id', $movement->document->id)->update([
+                        'type' => $fileExtension,
+                        'original_name' => $originalFilename,
+                        'description' => $data['document_description']
+                    ]);
+                    $movement->save();
+                } else {
+                    $document = new Document([
+                        'type' => $fileExtension,
+                        'original_name' => $originalFilename,
+                        'description' => $data['document_description'],
+                        'created_at' => Carbon::now()
+                    ]);
+                    $document->save();
+                    $movement->document_id = $document->id;
+                    $movement->save();
+                }
+                Storage::putFileAs('documents/' . $account->id . '/', $file, $movement->id . '.' . $fileExtension);
+            }
+            $movement->save();
+
+            return redirect()->route('movement.list',$account->id)->with('status', 'Movement updated with success!');
+        }else{
+            $error = "You can't list movements from an account that doesn't belong to you!";
+            return Response::make(view('home', compact('error')), 403);
+        }
+    }
+
+    public function destroy(Movement $movement){
+
+        $account = Account::findOrFail($movement->account_id);
+
+        if (Auth::user()->can('deleteMovement', $account)){
 
             $docDelete = Document::find($movement->document_id);
             Storage::delete('documents/'. $movement->account_id.'/'.$movement->id .'.'.$docDelete['type']);

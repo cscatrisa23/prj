@@ -5,11 +5,12 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header">{{ __('Add new movement') }}</div>
+                    <div class="card-header">{{ __('Edit movement') }}</div>
 
                     <div class="card-body">
-                        <form method="POST" enctype="multipart/form-data" action="{{route('movement.create', $account)}}">
+                        <form method="POST" enctype="multipart/form-data" action="{{route('movement.update', $movement)}}">
                             @csrf
+                            {{method_field('PUT')}}
                             <input type="hidden" name="token" value="{{ $token }}">
 
                             <div class="form-group row">
