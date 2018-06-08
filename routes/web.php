@@ -30,7 +30,7 @@ Route::patch('/users/{user}/promote', 'UserController@promoteUser')->name('users
 Route::patch('/users/{user}/demote', 'UserController@demoteUser')->name('users.demote');
 
 //US.9
-Route::get('/me/password','Auth\ResetPasswordController@changePassowordForm')->name('users.changePasswordForm');
+Route::get('/me/password','UserController@changePasswordForm')->name('users.changePasswordForm');
 Route::patch('/me/password', 'UserController@changePassword') ->name('users.changePassword');
 
 //US.10

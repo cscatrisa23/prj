@@ -87,7 +87,7 @@ class DocumentController extends Controller
     {
         $movement = $document->movement;
         $account = $movement->account;
-        if (Auth::user()->id == $account->user->id || Auth::user()->isAssociateOf($account->user)) {
+        if (Auth::user()->id == $account->owner_id || Auth::user()->isAssociateOf($account->user)) {
             return Storage::download('documents/'.$movement->account_id.'/'.$movement->id.'.'.$document->type, $document->original_name);
         }
         $error = "You don't have enough permissions to download this document";

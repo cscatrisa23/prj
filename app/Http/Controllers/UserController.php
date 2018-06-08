@@ -27,7 +27,7 @@ class UserController extends Controller
     {
         $this->middleware(['auth','admin'])->only('list');
         $this->middleware(['auth', 'admin','canPerformAction'])->only('demoteUser', 'blockUser', 'unblockUser', 'promoteUser');
-        $this->middleware('auth')->only('getProfiles', 'getAssociates', 'getAssociate_of', 'changePassword', 'editMyProfile', 'showEditMyProfile');
+        $this->middleware('auth')->only('getProfiles', 'getAssociates', 'getAssociate_of', 'changePassword', 'editMyProfile', 'showEditMyProfile', 'statistics');
     }
 
     public function list(Request $request){
@@ -144,7 +144,7 @@ class UserController extends Controller
     }
 
     public function changePasswordForm(){
-        return view('auth.passwords.changePasswordForm');
+        return view('auth.passwords.reset')->with('token');
     }
 
     public function getProfiles(Request $request){
@@ -227,21 +227,27 @@ class UserController extends Controller
     }
 
     public function statistics(Request $request){
-
-
         $id= $request->route('user');
-        $accounts= Account::where('owner_id', $id)->get();
-        $numberOfAccounts = Account::where('owner_id', $id)->count();
-        $username= DB::table('users')->where('id', $id)->value('name');
+        $user = User::findOrfail($id);
+        if ($user->isAssociateOf(Auth::user()) || Auth::user()->id == $user->id) {
+            $accounts = Account::where('owner_id', $user->id)->get();
+//        $accounts= Account::findOrFail($id);
+            $numberOfAccounts = Account::where('owner_id', $id)->count();
+            $username = DB::table('users')->where('id', $id)->value('name');
 
+            $summary = $accounts->pluck('current_balance');
+            $totalBalance = $summary->sum();
 
-        $totalBalance=0;
-        foreach ($accounts as $account)
-        {
-            $totalBalance+=$account->current_balance;
+            $totalSomaPos =0;
+            foreach ($accounts as $account) {
+                $totalSomaPos += abs($account->current_balance);
+            }
+            foreach ($accounts as $account) {
+                $percentage[] = number_format(abs($account->current_balance) / $totalSomaPos * 100, 2);
+            }
+            return view('users.statistics', compact('username', 'numberOfAccounts', 'totalBalance', 'accounts', 'totalSomaPos', 'summary', 'percentage'));
         }
-
-        return view('users.statistics', compact('username','numberOfAccounts','totalBalance', 'accounts'));
+        abort(403);
     }
 
 

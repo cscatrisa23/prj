@@ -24,6 +24,10 @@ class Account extends Model
         return $this->belongsTo('App\User', 'owner_id');
     }
 
+    public function type(){
+        return $this->hasOne('App\Account_type', 'id', 'account_type_id');
+    }
+
     public function movements(){
         return $this->hasMany('App\Movement');
     }

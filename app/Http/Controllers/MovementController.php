@@ -33,6 +33,7 @@ class MovementController extends Controller
 
     public function create(Account $account){
 
+        //if (Auth::user()->can('addMovements', $account)) {
         if (Auth::user()->id == $account->user->id) {
             $movementCategories = MovementCategories::all();
             $user = $account->user;
@@ -45,7 +46,6 @@ class MovementController extends Controller
     protected function store(Request $request)
     {
         $account = Account::findOrFail($request->route('account'));
-
         if(Auth::user()->id == $account->user->id){
 
             $data = $request->validate([
@@ -69,8 +69,9 @@ class MovementController extends Controller
                 $movement['description'] = $data['description'];
             }
 
+
             if (count($account->movements()->where('date','<', $movement->date)->get())>0){
-                $movement->start_balance = $account->movements()->orderBy('id', 'desc')->orderBy('date')->orderByDesc('created_at', 'desc')->where('date', '<=', $movement->date)->first()->end_balance;
+                $movement->start_balance = $account->movements()->orderBy('date', 'desc')->orderByDesc('created_at')->where('date', '<=', $movement->date)->first()->end_balance;
             }else{
                 $movement->start_balance= $account->start_balance;
             }
@@ -78,24 +79,6 @@ class MovementController extends Controller
                 $movement->end_balance = $movement->start_balance - $movement->value;
             }else{
                 $movement->end_balance = $movement->start_balance + $movement->value;
-            }
-
-            if(array_key_exists('document_file', $data)) {
-                $file = $data['document_file'];
-                $fileExtension = $file->getClientOriginalExtension();
-                $originalFilename = $file->getClientOriginalName();
-
-                $document = new Document([
-                    'type' => $fileExtension,
-                    'original_name' => $originalFilename,
-                    'description' => $data['document_description'],
-                    'created_at' => Carbon::now()
-                ]);
-                $document->save();
-                $movement->document_id = $document->id;
-                $movement->save();
-
-                Storage::putFileAs('documents/'.$account->id.'/',$file,$movement->id.'.'.$fileExtension);
             }
 
             $movementsAfter = $account->movements()->where('id', '!=', $movement->id)->where('date','>', $movement->date)->orderBy('date')->orderBy('created_at')->get();
@@ -112,6 +95,29 @@ class MovementController extends Controller
             }
 
             $account->current_balance = $last_end_balance;
+            if ( $account->last_movement_date <$movement->date  ){
+                $account->last_movement_date = $movement->date;
+            }
+
+            if(array_key_exists('document_file', $data)) {
+                $file = $data['document_file'];
+                $fileExtension = $file->getClientOriginalExtension();
+                $originalFilename = $file->getClientOriginalName();
+
+                $document = new Document([
+                    'type' => $fileExtension,
+                    'original_name' => $originalFilename,
+                    'description' => $data['document_description'],
+                    'created_at' => Carbon::now()
+                ]);
+
+                $document->save();
+                $movement->document_id = $document->id;
+                $movement->save();
+
+                Storage::putFileAs('documents/'.$account->id.'/',$file,$movement->id.'.'.$fileExtension);
+            }
+
             $account->save();
             $movement->save();
 

@@ -75,6 +75,7 @@
                                 <a class="dropdown-item" href="{{ route('users.associates') }}">{{ __('My associates') }}</a>
                                 <a class="dropdown-item" href="{{ route('users.associate_of') }}">{{ __('Associate Of') }}</a>
                                 <a class="dropdown-item" href="{{route('accounts.users', Auth::user())}}">{{__('My accounts')}}</a>
+                                <a class="dropdown-item" href="{{route('users.changePasswordForm')}}">{{__('Change Password')}}</a>
                                 <a class="dropdown-item" href="{{ route('logout') }}"
                                    onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">

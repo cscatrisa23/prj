@@ -41,7 +41,7 @@
                 @foreach ($accounts as $account)
                     <tr>
                         <td>{{$account->code}}</td>
-                        <td>{{DB::table('account_types')->where('id', $account->account_type_id)->value('name')}}</td>
+                        <td>{{$account->type->name}}</td>
                         <td>{{$account->start_balance}}</td>
                         <td>{{$account->current_balance}}</td>
                         <td>

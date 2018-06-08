@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
+use function Tests\Feature\to_cents;
 
 class AccountController extends Controller
 {
@@ -138,28 +139,33 @@ class AccountController extends Controller
         ]);
         $account->account_type_id = $data['account_type_id'];
         $account->code = $data['code'];
+        $old_start_balance = $account->start_balance;
         $account->start_balance = $data['start_balance'];
         $account->date = $data['date'];
 
         if (array_key_exists('description', $data) || $data['description']=!null){
             $account->description = $data['description'];
         }
-        $last_end_balance = $account->start_balance;
-        //update every value
-        $movements = $account->movements()->orderBy('date', 'desc')->orderByDesc('created_at', 'desc')->get()->reverse(true);
-        foreach ($movements as $movement){
-            $movement->start_balance =$last_end_balance;
-            if ($movement->type == "expense"){
-                $movement->end_balance = $movement->start_balance  - $movement->value;
-            }else{
-                $movement->end_balance = $movement->start_balance  + $movement->value;
+        if($account->start_balance != $old_start_balance){
+//        $movements = $account->movements()->orderBy('date', 'desc')->orderByDesc('created_at', 'desc')->get()->reverse(true);
+            $last_end_balance = $account->start_balance;
+            $movements = $account->movements()->orderBy('date')->orderBy('created_at')->get();
+            foreach ($movements as $movement){
+                $movement->start_balance =$last_end_balance;
+                $movement->start_balance = (to_cents($movement->start_balance)) /100;
+                if ($movement->type == "expense"){
+                    $movement->end_balance = $movement->start_balance  - $movement->value;
+                }else{
+                    $movement->end_balance = $movement->start_balance  + $movement->value;
+                }
+                $last_end_balance=$movement->end_balance;
+                $movement->end_balance = (to_cents($movement->end_balance)) /100;
+                $movement->save();
             }
-            $last_end_balance=$movement->end_balance;
-            $movement->save();
+            $account->current_balance = $last_end_balance;
         }
-        $account->current_balance = $last_end_balance;
-        $account->save();
 
+        $account->save();
 
         return redirect()->route('accounts.users',Auth::user()->id)->with('status', 'Account updated with success!');
     }

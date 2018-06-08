@@ -16,32 +16,43 @@
         @if(count($accounts))
             <div class="links">
                 <p>Number of Accounts: {{$numberOfAccounts}}</p>
-                <p>Total balance of accounts: {{$totalBalance}}€</p>
+                <p>Total balance of accounts: {{number_format($totalBalance, 2)}}€</p>
             </div>
             <table class="table table-striped">
                 <thead>
                 <tr>
                     <th>Account code</th>
                     <th>Account type</th>
+                    <th>Current Balance</th>
                     <th>Status</th>
                     <th>Account Percentage</th>
                 </tr>
                 </thead>
                 <tbody>
-                @foreach ($accounts as $account)
+                @for($i = 0; $i < count($summary); $i++)
                     <tr>
-                        <td>{{$account->code}}</td>
-                        <td>{{DB::table('account_types')->where('id', $account->account_type_id)->value('name')}}
                         <td>
-                            @if($account->isOpen())
+                            {{$accounts[$i]->code}}
+                        </td>
+                        <td>
+                            {{$accounts[$i]->type->name}}
+                        </td>
+                        <td>
+                            {{$summary[$i]}}
+                        </td>
+                        <td>
+                            @if($accounts[$i]->isOpen())
                                 <span>Open</span>
                             @else
                                 <span>Closed</span>
                             @endif
                         </td>
-                        <td>{{round($account->current_balance/$totalBalance*100, 2)}}%</td>
+                        <td>
+                            {{$percentage[$i]}}%
+                        </td>
                     </tr>
-                @endforeach
+                @endfor
+
             </table>
         @else
             <h2>No accounts found</h2>
