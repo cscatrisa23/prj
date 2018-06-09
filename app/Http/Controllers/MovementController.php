@@ -12,6 +12,7 @@ use App\MovementCategories;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use function Tests\Feature\to_cents;
 
 class MovementController extends Controller
 {
@@ -142,9 +143,7 @@ class MovementController extends Controller
     }
 
     public function update(Movement $movement, Request $request){
-
         $account = Account::findOrFail($movement->account_id);
-
         if(Auth::user()->id == $account->owner_id){
             $data = $request->validate([
                 'movement_category_id' => 'required|exists:movement_categories,id',
@@ -154,16 +153,14 @@ class MovementController extends Controller
                 'document_file' => 'nullable|file|mimes:pdf,png,jpeg|required_with:document_description',
                 'document_description'=> 'nullable|string|max:255',
             ]);
-
             $movement->date=$data['date'];
             $movement->value=$data['value'];
             $movement->movement_category_id=$data['movement_category_id'];
             $movement->type = MovementCategories::where('id', $data['movement_category_id'])->value('type');
-
-
             if ($request->has('description')){
                 $movement->description = $data['description'];
             }
+
 
             if ($movement->type == "expense"){
                 $movement->end_balance = $movement->start_balance - $movement->value;
@@ -175,7 +172,6 @@ class MovementController extends Controller
                 $file = $data['document_file'];
                 $fileExtension = $file->getClientOriginalExtension();
                 $originalFilename = $file->getClientOriginalName();
-
                 if ($movement->document_id != null) {
                     Storage::delete('documents/' . $account->id . '/' . $movement->id . '.' . $movement->document->type);
                     Document::where('id', $movement->document->id)->update([
@@ -199,6 +195,7 @@ class MovementController extends Controller
             }
             $movement->save();
 
+
             return redirect()->route('movement.list',$account->id)->with('status', 'Movement updated with success!');
         }else{
             $error = "You can't list movements from an account that doesn't belong to you!";
@@ -214,8 +211,34 @@ class MovementController extends Controller
 
             $docDelete = Document::find($movement->document_id);
             Storage::delete('documents/'. $movement->account_id.'/'.$movement->id .'.'.$docDelete['type']);
+            $old_date = $movement->date;
             $movement->delete();
 
+            if (count($account->movements()->where('date','<', $old_date)->get())>0) {
+                $last_end_balance = $account->movements()->orderBy('date', 'desc')->orderBy('created_at')->where('date', '<', $old_date)->first()->end_balance;
+            }else{
+                $last_end_balance = $account->start_balance;
+            }
+
+
+            $movementsAfter = $account->movements()->where('date','>', $old_date)->orderBy('date')->orderBy('created_at')->get();
+            foreach ($movementsAfter as $movementAfter){
+                $movementAfter->start_balance = $last_end_balance;
+                if ($movementAfter->type ="expense"){
+                    $movementAfter->end_balance = $movementAfter->start_balance - $movementAfter->value;
+                }else{
+                    $movementAfter->end_balance = $movementAfter->start_balance + $movementAfter->value;
+                }
+                $movementAfter->save();
+                $last_end_balance= $movementAfter->end_balance;
+            }
+            $account->current_balance = $last_end_balance;
+
+            $movementAtTail = Movement::where('account_id', $account->id)->orderBy('date')->orderBy('created_at')->get()->reverse(true)->first();
+
+            $account->last_movement_date = $movementAtTail->date ?? null;
+
+            $account->save();
             return redirect()->back()->with('status', 'You have successfully deleted the movement \''. $movement->id.'\'');
         }
         $error = "You can't delete movements from an account that doesn't belong to you!";

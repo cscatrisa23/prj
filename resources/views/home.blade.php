@@ -13,7 +13,7 @@
                     @endif
                 <div class="card">
                     <div class="card-header">
-                        <span style="float: left;">Dashboard</span>
+                        <span style="float: left;">Home</span>
                     </div>
                     <div class="card-body">
                         @if (session('status'))

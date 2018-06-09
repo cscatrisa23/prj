@@ -25,7 +25,7 @@ class AccountController extends Controller
     }
 
     public function getUserAccounts(User $user){
-        $accounts = Account::where('owner_id', $user->id)->get();
+        $accounts = Account::where('owner_id', $user->id)->paginate(5);;
         return view('accounts.list', compact('accounts', 'user'));
     }
 
@@ -44,12 +44,11 @@ class AccountController extends Controller
 
     public function deleteAccount(Account $account){
         if (Auth::user()->can('deleteCloseOrReopen', $account)){
-
             if (Auth::user()->can('accountBeDeleted', $account)){
                 $account->delete();
                 return redirect()->back()->with('status', 'You have successfully deleted the account \''. $account->code.'\'');
             }
-            else //nao tem movimentos associados
+            else
             {
                 return redirect()->route('accounts.users', [$account->user])->with('error', 'You cant delete an account that has movements!');
             }
@@ -72,12 +71,12 @@ class AccountController extends Controller
     }
 
     public function getUserAccountsOpen(User $user){
-        $accounts = Account::where('owner_id', $user->id)->whereNull('deleted_at')->get();
+        $accounts = Account::where('owner_id', $user->id)->whereNull('deleted_at')->paginate(5);
         return view('accounts.list', compact('accounts', 'user'));
     }
 
     public function getUserAccountsClose(User $user){
-        $accounts = Account::where('owner_id', $user->id)->whereNotNull('deleted_at')->get();
+        $accounts = Account::where('owner_id', $user->id)->whereNotNull('deleted_at')->paginate(5);
         return view('accounts.list', compact('accounts', 'user'));
     }
 
@@ -109,7 +108,7 @@ class AccountController extends Controller
 
 
 
-        return redirect()->route('accounts.users',Auth::user()->id)->with('success', 'Account added with success!');
+        return redirect()->route('accounts.users',Auth::user()->id)->with('status', 'Account added with success!');
     }
 
     public function showEdit(Account $account){

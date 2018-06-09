@@ -33,7 +33,7 @@
                             <div class="form-group row">
                                 <label for="date" class="col-md-4 col-form-label text-md-right">{{ __('Date') }}</label>
                                 <div class="col-md-6">
-                                    <input type="date" name="date" class="form-control" id="date" placeholder="Date" value="{{ old('date') }}">
+                                    <input type="date" name="date" class="form-control" id="date" placeholder="Date" value="{{ old('date') ?? $movement->date}}">
                                     @if ($errors->has('date'))
                                         <span class="invalid-feedback">
                                         <strong>{{ $errors->first('date') }}</strong>
@@ -45,7 +45,7 @@
                             <div class="form-group row">
                                 <label for="value" class="col-md-4 col-form-label text-md-right">{{ __('Value') }}</label>
                                 <div class="col-md-6">
-                                    <input name="value" id="value" type="number" step="0.01" class="form-control{{ $errors->has('value') ? ' is-invalid' : '' }}" name="value">
+                                    <input name="value" id="value" type="number" step="0.01" class="form-control{{ $errors->has('value') ? ' is-invalid' : '' }}" name="value" value="{{ old('value') ?? $movement->value}}">
                                     @if ($errors->has('value'))
                                         <span class="invalid-feedback">
                                         <strong>{{ $errors->first('value') }}</strong>
@@ -57,7 +57,7 @@
                             <div class="form-group row">
                                 <label for="description" class="col-md-4 col-form-label text-md-right">{{ __('Description (Optional)') }}</label>
                                 <div class="col-md-6">
-                                    <textarea name="description" id="description" class="form-control{{ $errors->has('description') ? ' is-invalid' : '' }}" name="description"></textarea>
+                                    <textarea name="description" id="description" class="form-control{{ $errors->has('description') ? ' is-invalid' : '' }}" name="description" >{{ old('description') ?? $movement->description}}</textarea>
                                     @if ($errors->has('description'))
                                         <span class="invalid-feedback">
                                         <strong>{{ $errors->first('description') }}</strong>
@@ -83,7 +83,7 @@
                             <div class="form-group row">
                                 <label for="document_description" class="col-md-4 col-form-label text-md-right">{{ __('Document Description (Optional)') }}</label>
                                 <div class="col-md-6">
-                                    <textarea name="document_description" id="document_description" class="form-control{{ $errors->has('document_description') ? ' is-invalid' : '' }}" name="document_description"></textarea>
+                                    <textarea name="document_description" id="document_description" class="form-control{{ $errors->has('document_description') ? ' is-invalid' : '' }}" name="document_description" ></textarea>
                                     @if ($errors->has('document_description'))
                                         <span class="invalid-feedback">
                                         <strong>{{ $errors->first('document_description') }}</strong>

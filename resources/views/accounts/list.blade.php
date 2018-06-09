@@ -23,72 +23,60 @@
                 </div>
                 <a href="{{route('account.create')}}" class="btn btn-primary" style="float: right;">Create Account</a>
             </div>
-
+            {{$accounts->links()}}
         @if(count($accounts))
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th>Accounts code</th>
-                    <th>Account Type</th>
-                    <th>Start Balance</th>
-                    <th>Current Balance</th>
-                    <th>Status</th>
-                    <th>Number of Movements</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
                 @foreach ($accounts as $account)
-                    <tr>
-                        <td>{{$account->code}}</td>
-                        <td>{{$account->type->name}}</td>
-                        <td>{{$account->start_balance}}</td>
-                        <td>{{$account->current_balance}}</td>
-                        <td>
-                            @if($account->isOpen())
-                                <span>Open</span>
+                    <div class="card card-block bg-faded">
+                        <div class="col-md-8 col-sm-8" style="margin-top: 20px; ">
+                            <p><b>Accounts code: </b>{{$account->code}}</p>
+                            <p><b>Account Type: </b>{{$account->date}}</p>
+                            <p><b>Start Balance: </b>{{$account->start_balance}}</p>
+                            <p><b>Current Balance: </b>{{$account->current_balance}}</p>
+                            <p><b>Status: </b>
+                                @if($account->isOpen())
+                                    <span>Open</span>
+                                @else
+                                    <span>Closed</span>
+                                @endif
+                            </p>
+                            <p><b>Number of Movements: </b>
+                                <a href="{{route('movement.list', $account)}}">
+                                    {{count($account->movements)}}
+                                </a>
+                            </p>
+                            @if($account->descritpion)
+                                <p><b>Description: </b>{{$account->description}}</p>
                             @else
-                                <span>Closed</span>
+                                <p><b>Description: </b><i>Not available</i></p>
                             @endif
-                        </td>
-                        <td>
-                            <a href="{{route('movement.list', $account)}}">
-                                {{count($account->movements)}}
-                            </a>
-                        </td>
-                        <td>
-                            @if (Auth::user()->can('deleteCloseOrReopen', $account))
-                                <div class="form-group row">
-                                    <form style="padding-right: 2px" class="form" method="GET" action="{{route('account.showEdit', $account)}}">
+                            <div class="form-group row" style="margin-top: 30px">
+                                <form style="padding-right: 2px; margin-left: 15px;" class="form" method="GET" action="{{route('account.showEdit', $account)}}">
+                                    {{csrf_field()}}
+                                    <button  type="submit" class="btn btn-xs btn-primary">Edit</button>
+                                </form>
+                                <form style="padding-right: 2px" class="form" method="POST" action="{{route('account.delete', $account)}}">
+                                    {{csrf_field()}}
+                                    {{method_field('DELETE')}}
+                                    <button  type="submit" class="btn btn-xs btn-danger">Delete</button>
+                                </form>
+                                @if($account->isOpen())
+                                    <form class="form" method="POST" action="{{route('account.close', $account)}}">
                                         {{csrf_field()}}
-                                        <button  type="submit" class="btn btn-xs btn-primary">Edit</button>
+                                        {{method_field('PATCH')}}
+                                        <button  type="submit" class="btn btn-xs btn-danger">Close</button>
                                     </form>
-                                     <form style="padding-right: 2px" class="form" method="POST" action="{{route('account.delete', $account)}}">
-                                         {{csrf_field()}}
-                                         {{method_field('DELETE')}}
-                                        <button  type="submit" class="btn btn-xs btn-danger">Delete</button>
+                                @else
+                                    <form class="form" method="POST" action="{{route('account.reopen', $account)}}">
+                                        {{csrf_field()}}
+                                        {{method_field('PATCH')}}
+                                        <button  type="submit" class="btn btn-xs btn-primary">Open</button>
                                     </form>
-                                    @if($account->isOpen())
-                                        <form class="form" method="POST" action="{{route('account.close', $account)}}">
-                                            {{csrf_field()}}
-                                            {{method_field('PATCH')}}
-                                            <button  type="submit" class="btn btn-xs btn-danger">Close</button>
-                                        </form>
-                                    @else
-                                        <form class="form" method="POST" action="{{route('account.reopen', $account)}}">
-                                            {{csrf_field()}}
-                                            {{method_field('PATCH')}}
-                                            <button  type="submit" class="btn btn-xs btn-primary">Open</button>
-                                        </form>
-                                    @endif
-                                </div>
-                            @else
-                                <span>Not allowed</span>
-                            @endif
-                        </td>
-                    </tr>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
                 @endforeach
-            </table>
+                    {{$accounts->links()}}
         @else
             <h2>No accounts found</h2>
         @endif

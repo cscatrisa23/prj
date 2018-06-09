@@ -21,7 +21,7 @@ class IsAdmin
             return $next($request);
         }
 
-        $error = "You don't have the permission to see the list of Users!'";
+        $error = "You don't have permission to see the list of Users!'";
         return Response::make(view('home', compact('error')), 403);
         //return redirect('/home');
     }

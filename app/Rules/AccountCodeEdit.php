@@ -32,7 +32,7 @@ class AccountCodeEdit implements Rule
         $accounts = Account::where('owner_id', Auth::user()->id)->get();
 
         foreach ($accounts as $account){
-            if ($account->code === $value){
+            if ($account->code === $value   ){
                 if($account->id == $this->account_id)
                     return true;
                 return false;

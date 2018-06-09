@@ -17,7 +17,7 @@
                                     <select name="account_type_id" id="inputType" class="form-control">
                                         <option disabled selected> Select an option </option>
                                         @foreach ($accountTypes as $accountType):
-                                        <option value="{{$accountType->id}}">{{$accountType->name}}</option>
+                                            <option value="{{$accountType->id}}">{{$accountType->name}}</option>
                                         @endforeach
                                     </select>
                                     @if ($errors->has('account_type_id'))
@@ -47,7 +47,7 @@
                                 <label for="date" class="col-md-4 col-form-label text-md-right">{{ __('Creation Date') }}</label>
 
                                 <div class="col-md-6">
-                                    <input id="date" type="date" class="form-control{{ $errors->has('date') ? ' is-invalid' : '' }}" name="date" value="{{ old('date')}}">
+                                    <input id="date" type="date" class="form-control{{ $errors->has('date') ? ' is-invalid' : '' }}" name="date" value="{{ old('date') ?? $account->date}}">
 
                                     @if ($errors->has('date'))
                                         <span class="invalid-feedback">
@@ -74,7 +74,7 @@
                                 <label for="description" class="col-md-4 col-form-label text-md-right">{{ __('Description   (Optional)') }}</label>
 
                                 <div class="col-md-6">
-                                    <textarea id="description" type="text" class="form-control" name="description" value="{{ old('description') }}"></textarea>
+                                    <textarea id="description" type="text" class="form-control" name="description">{{ old('description') ?? $account->description}}</textarea>
                                 </div>
                             </div>
 

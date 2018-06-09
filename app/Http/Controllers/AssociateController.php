@@ -42,7 +42,7 @@ class AssociateController extends Controller
         if (count($association->get())) {
             $association->delete();
         } else {
-            $error = "You are not associted with this user.";
+            $error = "Invalid user.";
             return Response::make(view('home', compact('error')), 404);
         }
 //        return redirect()->route('accounts.users',Auth::user()->id)->with('status', 'Account updated successfully!');

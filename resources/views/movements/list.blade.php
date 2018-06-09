@@ -18,6 +18,7 @@
                 <button  type="submit" class="btn btn-xs btn-primary">Create Movement</button>
             </form>
             @if(count($movements))
+                {{$movements->links()}}
                 @foreach ($movements as $movement)
                     <div class="card card-block bg-faded">
                         <div class="col-md-8 col-sm-8" style="margin-top: 20px; ">
