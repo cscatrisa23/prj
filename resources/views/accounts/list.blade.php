@@ -26,13 +26,15 @@
             {{$accounts->links()}}
         @if(count($accounts))
                 @foreach ($accounts as $account)
+
                     <div class="card card-block bg-faded">
                         <div class="col-md-8 col-sm-8" style="margin-top: 20px; ">
-                            <p><b>Accounts code: </b>{{$account->code}}</p>
+                            <p><b>Account code: </b>{{$account->code}}</p>
                             <p><b>Account Type: </b>{{$account->type->name}}</p>
                             <p><b>Date: </b>{{$account->date}}</p>
                             <p><b>Start Balance: </b>{{$account->start_balance}}</p>
                             <p><b>Current Balance: </b>{{$account->current_balance}}</p>
+
                             <p><b>Status: </b>
                                 @if($account->isOpen())
                                     <span>Open</span>
