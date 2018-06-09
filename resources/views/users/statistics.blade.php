@@ -29,7 +29,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @for($i = 0; $i < count($summary); $i++)
+                @for($i = 0; $i < count($accounts); $i++)
                     <tr>
                         <td>
                             {{$accounts[$i]->code}}
@@ -48,11 +48,10 @@
                             @endif
                         </td>
                         <td>
-                            {{$percentage[$i]}}%
+                            {{number_format($percentage[$i], 2)}}%
                         </td>
                     </tr>
                 @endfor
-
             </table>
         @else
             <h2>No accounts found</h2>

@@ -41,4 +41,6 @@ class AccountPolicy
     public function deleteMovement(User $user, Account $account){
         return $user->id==$account->owner_id;
     }
+
+
 }

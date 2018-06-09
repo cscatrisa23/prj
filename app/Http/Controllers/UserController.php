@@ -8,6 +8,7 @@ use App\Rules\VerifyOldPassword;
 use App\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -229,25 +230,28 @@ class UserController extends Controller
     public function statistics(Request $request){
         $id= $request->route('user');
         $user = User::findOrfail($id);
-        if ($user->isAssociateOf(Auth::user()) || Auth::user()->id == $user->id) {
+        if (Auth::user()->isAssociateOf($user)|| Auth::user()->id == $user->id) {
             $accounts = Account::where('owner_id', $user->id)->get();
 //        $accounts= Account::findOrFail($id);
             $numberOfAccounts = Account::where('owner_id', $id)->count();
             $username = DB::table('users')->where('id', $id)->value('name');
 
             $summary = $accounts->pluck('current_balance');
-            $totalBalance = $summary->sum();
+            $totalBalance= $summary->sum();
 
             $totalSomaPos =0;
             foreach ($accounts as $account) {
                 $totalSomaPos += abs($account->current_balance);
             }
+            $percentageAux[]=0;
             foreach ($accounts as $account) {
-                $percentage[] = number_format(abs($account->current_balance) / $totalSomaPos * 100, 2);
+                $percentageAux[] = number_format((abs($account->current_balance) / $totalSomaPos * 100),2);
             }
-            return view('users.statistics', compact('username', 'numberOfAccounts', 'totalBalance', 'accounts', 'totalSomaPos', 'summary', 'percentage'));
+            $percentage = Collection::make($percentageAux);
+            return view('users.statistics', compact('username', 'numberOfAccounts', 'totalBalance', 'accounts', 'summary', 'percentage'));
         }
-        abort(403);
+        $error = "You don\'t have access to ". $user->name."'s dashboard.'";
+        return Response::make(view('home', compact('error')), 403);
     }
 
 
